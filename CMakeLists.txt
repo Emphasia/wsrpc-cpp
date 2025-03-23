@@ -22,7 +22,6 @@ endif()
 set(Greeter_STANDALONE "$<IF:$<STREQUAL:${CMAKE_CURRENT_SOURCE_DIR},${CMAKE_SOURCE_DIR}>,ON,OFF>")
 option(Greeter_BUILD_DOC "Generate the doc target." ${Greeter_STANDALONE})
 option(Greeter_BUILD_TEST "Generate the test target." ${Greeter_STANDALONE})
-option(Greeter_BUILD_CLI "Generate the cli target." ON)
 option(Greeter_BUILD_INSTALL "Generate the install target." ON)
 
 # ---- Add source files ----
@@ -56,12 +55,6 @@ target_include_directories(
 
 if(Greeter_BUILD_TEST)
   add_subdirectory(test)
-endif()
-
-# ---- Create cli ----
-
-if(Greeter_BUILD_CLI)
-  add_subdirectory(cli)
 endif()
 
 # ---- Create package ----
