@@ -5,7 +5,7 @@ project(GreeterTests LANGUAGES CXX)
 # ---- Options ----
 
 option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
-option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
+# option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 
 # --- Import tools ----
 
@@ -16,13 +16,12 @@ include(../cmake/tools.cmake)
 include(../cmake/CPM.cmake)
 
 CPMAddPackage("gh:doctest/doctest@2.4.9")
-CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
 
-if(TEST_INSTALLED_VERSION)
-  find_package(Greeter REQUIRED)
-else()
-  CPMAddPackage(NAME Greeter SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
-endif()
+# if(TEST_INSTALLED_VERSION)
+#   find_package(Greeter REQUIRED)
+# else()
+#   CPMAddPackage(NAME Greeter SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+# endif()
 
 # ---- Create binary ----
 

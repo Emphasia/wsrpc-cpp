@@ -20,8 +20,9 @@ endif()
 # ---- Set options ----
 
 set(Greeter_STANDALONE "$<IF:$<STREQUAL:${CMAKE_CURRENT_SOURCE_DIR},${CMAKE_SOURCE_DIR}>,ON,OFF>")
-option(Greeter_BUILD_DOC "Generate the doc target." ${Greeter_STANDALONE})
+option(Greeter_BUILD_FORMAT "Generate the format target." ${Greeter_STANDALONE})
 option(Greeter_BUILD_TEST "Generate the test target." ${Greeter_STANDALONE})
+option(Greeter_BUILD_DOC "Generate the doc target." ${Greeter_STANDALONE})
 option(Greeter_BUILD_INSTALL "Generate the install target." ON)
 
 # ---- Add source files ----
@@ -50,6 +51,12 @@ target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
+
+# ---- Create format ----
+
+if(Greeter_BUILD_FORMAT)
+  CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
+endif()
 
 # ---- Create test ----
 
