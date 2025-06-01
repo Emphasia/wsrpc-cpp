@@ -19,10 +19,16 @@ endif()
 
 # ---- Set options ----
 
-set(wsrpc_STANDALONE "$<IF:$<STREQUAL:${CMAKE_CURRENT_SOURCE_DIR},${CMAKE_SOURCE_DIR}>,ON,OFF>")
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(wsrpc_STANDALONE ON)
+else()
+  set(wsrpc_STANDALONE OFF)
+endif()
+message(STATUS "wsrpc_STANDALONE: ${wsrpc_STANDALONE}")
 option(wsrpc_BUILD_FORMAT "Generate the format target." ${wsrpc_STANDALONE})
 option(wsrpc_BUILD_TEST "Generate the test target." ${wsrpc_STANDALONE})
 option(wsrpc_BUILD_DOC "Generate the doc target." ${wsrpc_STANDALONE})
+option(wsrpc_BUILD_CLI "Generate the cli target." ${wsrpc_STANDALONE})
 option(wsrpc_BUILD_INSTALL "Generate the install target." ON)
 
 # ---- Add source files ----
@@ -34,16 +40,27 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/
 
 add_library(${PROJECT_NAME} ${headers} ${sources})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # ---- Add dependencies ----
 
 include(cmake/CPM.cmake)
 include(cmake/fmt.cmake)
+include(cmake/spdlog.cmake)
 
 # ---- Link dependencies ----
 
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  fmt::fmt
+  spdlog::spdlog
+)
+
+# ---- Set dependencies ----
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE "SPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_INFO>")
 
 # ---- Handle includes ----
 
@@ -55,18 +72,28 @@ target_include_directories(
 # ---- Create format ----
 
 if(wsrpc_BUILD_FORMAT)
+  message(STATUS "enabling wsrpc_BUILD_FORMAT")
   CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
+endif()
+
+# ---- Create cli ----
+
+if(wsrpc_BUILD_CLI)
+  message(STATUS "enabling wsrpc_BUILD_CLI")
+  add_subdirectory(cli)
 endif()
 
 # ---- Create test ----
 
 if(wsrpc_BUILD_TEST)
+  message(STATUS "enabling wsrpc_BUILD_TEST")
   add_subdirectory(test)
 endif()
 
 # ---- Create package ----
 
 if(wsrpc_BUILD_INSTALL)
+  message(STATUS "enabling wsrpc_BUILD_INSTALL")
   CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.13.0")
   packageProject(
     NAME ${PROJECT_NAME}
@@ -75,8 +102,10 @@ if(wsrpc_BUILD_INSTALL)
     BINARY_DIR ${PROJECT_BINARY_DIR}
     INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
     INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
-    VERSION_HEADER $<TOLOWER:${PROJECT_NAME}>/version.h
+    VERSION_HEADER ${PROJECT_NAME}/version.h
     COMPATIBILITY SameMajorVersion
-    DEPENDENCIES "fmt 10.2.1"
+    DEPENDENCIES
+      "fmt 11.1.4"
+      "spdlog 1.15.3"
   )
 endif()
