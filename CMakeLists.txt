@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.14...3.31)
 # ---- Create project ----
 
 project(
-  Greeter
-  VERSION 1.0
+  wsrpc
+  VERSION 1.0.0
   LANGUAGES CXX
 )
 
@@ -19,11 +19,11 @@ endif()
 
 # ---- Set options ----
 
-set(Greeter_STANDALONE "$<IF:$<STREQUAL:${CMAKE_CURRENT_SOURCE_DIR},${CMAKE_SOURCE_DIR}>,ON,OFF>")
-option(Greeter_BUILD_FORMAT "Generate the format target." ${Greeter_STANDALONE})
-option(Greeter_BUILD_TEST "Generate the test target." ${Greeter_STANDALONE})
-option(Greeter_BUILD_DOC "Generate the doc target." ${Greeter_STANDALONE})
-option(Greeter_BUILD_INSTALL "Generate the install target." ON)
+set(wsrpc_STANDALONE "$<IF:$<STREQUAL:${CMAKE_CURRENT_SOURCE_DIR},${CMAKE_SOURCE_DIR}>,ON,OFF>")
+option(wsrpc_BUILD_FORMAT "Generate the format target." ${wsrpc_STANDALONE})
+option(wsrpc_BUILD_TEST "Generate the test target." ${wsrpc_STANDALONE})
+option(wsrpc_BUILD_DOC "Generate the doc target." ${wsrpc_STANDALONE})
+option(wsrpc_BUILD_INSTALL "Generate the install target." ON)
 
 # ---- Add source files ----
 
@@ -54,19 +54,19 @@ target_include_directories(
 
 # ---- Create format ----
 
-if(Greeter_BUILD_FORMAT)
+if(wsrpc_BUILD_FORMAT)
   CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
 endif()
 
 # ---- Create test ----
 
-if(Greeter_BUILD_TEST)
+if(wsrpc_BUILD_TEST)
   add_subdirectory(test)
 endif()
 
 # ---- Create package ----
 
-if(Greeter_BUILD_INSTALL)
+if(wsrpc_BUILD_INSTALL)
   CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.13.0")
   packageProject(
     NAME ${PROJECT_NAME}
