@@ -103,7 +103,7 @@ TEST_SUITE("server")
     static const auto port = 9001;
 
     wsrpc::Server server;
-    auto s = std::jthread([&]() { server.serve(host, port); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
 
     auto code = R"(
 import sys
@@ -173,9 +173,9 @@ if __name__ == '__main__':
 
     wsrpc::Server<AppT> server;
     auto s = std::jthread([&]() {
-      server.serve(host, port);
+      CHECK_NOTHROW(server.serve(host, port));
       // TODO
-      server.serve(host, port);
+      CHECK_NOTHROW(server.serve(host, port));
     });
 
     auto ret = std::system(
@@ -191,5 +191,38 @@ if __name__ == '__main__':
         .c_str());
     std::cout << "py exited with: " << ret << std::endl;
     CHECK(ret == 0);
+  }
+
+  TEST_CASE("Server serve function break")
+  {
+    static const auto path = std::filesystem::path(ROOTPATH);
+    static const auto host = "127.0.0.1";
+    static const auto port = 9001;
+
+    struct AppT : wsrpc::App
+    {
+      AppT() : App()
+      {
+        regist("test", [&](const wsrpc::rawjson_t&) -> wsrpc::package_t {
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+          return {{"{}"}, {}};
+        });
+      }
+    };
+
+    wsrpc::Server<AppT> server;
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
+
+    auto ret = std::system(
+      fmt::to_string(
+        fmt::join(
+          {
+            //
+            fmt::format("cd {}", path.string()),                                           //
+            fmt::format("timeout 3s python client.py ws://{}:{} {}", host, port, "test"),  //
+          },                                                                               //
+          " && "))
+        .c_str());
+    std::cout << "py exited with: " << ret << std::endl;
   }
 }
