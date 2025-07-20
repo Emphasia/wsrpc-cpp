@@ -26,7 +26,7 @@ struct Server
     App app{};
   };
 
-  static void init(SocketData& sd)
+  static void init([[maybe_unused]] SocketData& sd)
   {
   }
 
@@ -83,14 +83,14 @@ struct Server
          /* Handlers */
          .upgrade = nullptr,
          .open =
-           [](auto* ws) {
+           []([[maybe_unused]] auto* ws) {
              /* Open event here, you may access ws->getUserData() which points to a SocketData struct */
              SPDLOG_INFO("Socket opened");
              init(*ws->getUserData());
              SPDLOG_INFO("Socket initialized");
            },
          .message =
-           [](auto* ws, std::string_view message, uWS::OpCode opCode) {
+           []([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
              /* You may access ws->getUserData() here */
              SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
              switch (opCode) {
@@ -111,27 +111,27 @@ struct Server
              }
            },
          .dropped =
-           [](auto* ws, std::string_view message, uWS::OpCode opCode) {
+           []([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
              /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
              SPDLOG_WARN("Message dropped: {}, {}", std::to_string(opCode), message);
            },
          .drain =
-           [](auto* ws) {
+           []([[maybe_unused]] auto* ws) {
              /* Check ws->getBufferedAmount() here */
              SPDLOG_WARN("Message drained");
            },
          .ping =
-           [](auto* ws, std::string_view message) {
+           []([[maybe_unused]] auto* ws, std::string_view message) {
              /* Not implemented yet */
-             SPDLOG_DEBUG("Message ping received");
+             SPDLOG_DEBUG("Message ping received: {}", message);
            },
          .pong =
-           [](auto* ws, std::string_view message) {
+           []([[maybe_unused]] auto* ws, std::string_view message) {
              /* Not implemented yet */
-             SPDLOG_DEBUG("Message pong received");
+             SPDLOG_DEBUG("Message pong received: {}", message);
            },
          .close =
-           [](auto* ws, int code, std::string_view message) {
+           []([[maybe_unused]] auto* ws, int code, std::string_view message) {
              /* You may access ws->getUserData() here */
              SPDLOG_INFO("Socket closed: {}, {}", code, message);
            }})
@@ -140,7 +140,7 @@ struct Server
         port,
         [&](auto* listen_socket) {
           if (!listen_socket) {
-            SPDLOG_CRITICAL("Unavaiable: {}:{}", host, port);
+            SPDLOG_CRITICAL("Unavailable on {}:{}", host, port);
           }
           SPDLOG_INFO("Listening on {}:{}", host, port);
         })
