@@ -3,8 +3,6 @@
 #include <cassert>
 #include <string>
 #include <string_view>
-#include <utility>
-#include <vector>
 
 #include <App.h>
 #include <fmt/format.h>
@@ -31,8 +29,11 @@ struct Server
   {
   }
 
-  using attachs_t = std::vector<std::vector<std::byte>>;
-  using package_t = std::pair<std::string, attachs_t>;
+  using package_t = struct
+  {
+    rawjson_t resp;
+    attachs_t atts;
+  };
 
   static package_t handle(SocketData& sd, std::string_view raw)
   {
@@ -69,6 +70,12 @@ struct Server
     return pack(response, std::move(result.value().second));
   }
 
+  static void send(auto* ws, const package_t& pkg)
+  {
+    for (auto& att : pkg.atts) ws->send(sv(att), uWS::OpCode::BINARY);
+    ws->send(pkg.resp, uWS::OpCode::TEXT);
+  }
+
   static void serve(const std::string host, const int port)
   {
     uWS::App u;
@@ -99,11 +106,10 @@ struct Server
            switch (opCode) {
              case uWS::OpCode::TEXT: {
                assert(not glz::validate_json(message));
-               auto [resp, atts] = handle(*ws->getUserData(), message);
-               SPDLOG_DEBUG("Response +{} generated: {}", atts.size(), resp);
-               assert(not glz::validate_json(resp));
-               for (auto& att : atts) ws->send(sv(att), uWS::OpCode::BINARY);
-               ws->send(resp, uWS::OpCode::TEXT);
+               auto pkg = handle(*ws->getUserData(), message);
+               SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
+               assert(not glz::validate_json(pkg.resp));
+               uWS::Loop::get()->defer([ws, pkg = std::move(pkg)]() { Server::send(ws, pkg); });
                break;
              }
              case uWS::OpCode::BINARY: {

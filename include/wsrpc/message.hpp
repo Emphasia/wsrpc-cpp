@@ -3,12 +3,19 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 #include <glaze/glaze.hpp>
 
 namespace wsrpc
 {
+
+using rawjson_t = std::string;
+using binary_t = std::vector<std::byte>;
+using attachs_t = std::vector<binary_t>;
+using package_t = std::pair<rawjson_t, attachs_t>;
 
 struct request_t
 {

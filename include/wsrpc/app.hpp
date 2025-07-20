@@ -4,8 +4,6 @@
 #include <flat_map>
 #include <functional>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include <spdlog/spdlog.h>
 
@@ -16,10 +14,6 @@ namespace wsrpc
 
 struct App
 {
-  using rawjson_t = std::string;
-  using binary_t = std::vector<std::byte>;
-  using attachs_t = std::vector<binary_t>;
-  using package_t = std::pair<rawjson_t, attachs_t>;
   using return_t = std::expected<package_t, std::string>;
   using handler_t = std::move_only_function<return_t(rawjson_t)>;
 

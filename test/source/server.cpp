@@ -38,8 +38,8 @@ TEST_SUITE("server")
     wsrpc::Server::SocketData socket_data;
 
     // Register a test handler
-    socket_data.app.regist("test_method", [](const wsrpc::App::rawjson_t&) {
-      wsrpc::App::package_t package{R"({"result": "success"})", {}};
+    socket_data.app.regist("test_method", [](const wsrpc::rawjson_t&) {
+      wsrpc::package_t package{R"({"result": "success"})", {}};
       return package;
     });
 
@@ -47,11 +47,11 @@ TEST_SUITE("server")
     std::string_view valid_request = R"({"id": "1", "method": "test_method", "params": {}})";
     auto result = wsrpc::Server::handle(socket_data, valid_request);
 
-    CHECK_FALSE(glz::validate_json(result.first));
+    CHECK_FALSE(glz::validate_json(result.resp));
 
     // Parse the response to check it
     wsrpc::response_t response{};
-    auto pe = glz::read_json(response, result.first);
+    auto pe = glz::read_json(response, result.resp);
     REQUIRE_FALSE(pe);
     CHECK(response.id == "1");
     CHECK(response.result.str == R"({"result": "success"})");
@@ -66,11 +66,11 @@ TEST_SUITE("server")
     std::string_view invalid_request = R"({"id": "1", "method": "test_method")";  // Missing closing brace
     auto result = wsrpc::Server::handle(socket_data, invalid_request);
 
-    CHECK_FALSE(glz::validate_json(result.first));
+    CHECK_FALSE(glz::validate_json(result.resp));
 
     // Parse the response to check it
     wsrpc::response_t response{};
-    auto pe = glz::read_json(response, result.first);
+    auto pe = glz::read_json(response, result.resp);
     REQUIRE_FALSE(pe);
     // CHECK(response.id.empty());
     // CHECK(response.result.str.empty());
@@ -86,11 +86,11 @@ TEST_SUITE("server")
     std::string_view unknown_request = R"({"id": "1", "method": "unknown_method", "params": {}})";
     auto result = wsrpc::Server::handle(socket_data, unknown_request);
 
-    CHECK_FALSE(glz::validate_json(result.first));
+    CHECK_FALSE(glz::validate_json(result.resp));
 
     // Parse the response to check it
     wsrpc::response_t response{};
-    auto pe = glz::read_json(response, result.first);
+    auto pe = glz::read_json(response, result.resp);
     REQUIRE_FALSE(pe);
     CHECK(response.id == "1");
     // CHECK(response.result.str.empty());
