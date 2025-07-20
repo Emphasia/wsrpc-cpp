@@ -18,17 +18,14 @@ namespace wsrpc
 {
 
 template <std::derived_from<App> App_t = App>
+requires std::default_initializable<App_t>
 struct Server
 {
   /* ws->getUserData returns one of these */
   struct SocketData
   {
-    App_t app{};
+    std::unique_ptr<App_t> app = std::make_unique<App_t>();
   };
-
-  static void init([[maybe_unused]] SocketData& sd)
-  {
-  }
 
   using package_t = struct
   {
@@ -38,6 +35,7 @@ struct Server
 
   static package_t handle(SocketData& sd, std::string_view raw)
   {
+    assert(sd.app);
     request_t request{};
     response_t response{.result = "null"};
     auto pack = [](const response_t& resp, attachs_t&& atts = {}) -> package_t {
@@ -61,7 +59,7 @@ struct Server
       return pack(response);
     }
     response.id = request.id;
-    auto result = sd.app.handle(request.method, request.params.str);
+    auto result = sd.app->handle(request.method, request.params.str);
     if (!result) {
       SPDLOG_ERROR("Error calling {}: {}", raw, result.error());
       response.error = result.error();
@@ -97,8 +95,6 @@ struct Server
          [&]([[maybe_unused]] auto* ws) {
            /* This connection opened */
            SPDLOG_INFO("Socket opened");
-           init(*ws->getUserData());
-           SPDLOG_INFO("Socket initialized");
          },
        .message =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {

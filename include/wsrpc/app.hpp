@@ -26,13 +26,20 @@ struct App
 
   virtual ~App() = default;
 
+  App(const App&) = delete;
+  App(App&&) = default;
+  App& operator=(const App&) = delete;
+  App& operator=(App&&) = default;
+
   void regist(const std::string& method, handler_t&& handler)
   {
+    SPDLOG_INFO("Registering method: {}", method);
     handlers.insert_or_assign(method, std::move(handler));
   }
 
   void unregist(const std::string& method)
   {
+    SPDLOG_INFO("Unregistering method: {}", method);
     handlers.erase(method);
   }
 

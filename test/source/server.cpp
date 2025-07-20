@@ -23,14 +23,8 @@ TEST_SUITE("server")
   TEST_CASE("SocketData initialization")
   {
     wsrpc::Server<>::SocketData socket_data;
-  }
 
-  TEST_CASE("Server init function")
-  {
-    wsrpc::Server<>::SocketData socket_data;
-
-    // Test that init function can be called without throwing
-    CHECK_NOTHROW(wsrpc::Server<>::init(socket_data));
+    CHECK(socket_data.app != nullptr);
   }
 
   TEST_CASE("Server handle function with valid request")
@@ -38,7 +32,7 @@ TEST_SUITE("server")
     wsrpc::Server<>::SocketData socket_data;
 
     // Register a test handler
-    socket_data.app.regist("test_method", [](const wsrpc::rawjson_t&) {
+    socket_data.app->regist("test_method", [](const wsrpc::rawjson_t&) {
       wsrpc::package_t package{R"({"result": "success"})", {}};
       return package;
     });
