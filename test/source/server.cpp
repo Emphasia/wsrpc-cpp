@@ -25,9 +25,9 @@ TEST_SUITE("server")
     wsrpc::Server::SocketData socket_data;
 
     // Register a test handler
-    socket_data.app.regist("test_method", [](const std::string& params) {
+    socket_data.app.regist("test_method", [](const wsrpc::App::rawjson_t&) {
       wsrpc::App::package_t package{R"({"result": "success"})", {}};
-      return wsrpc::App::return_t(package);
+      return package;
     });
 
     // Test handling a valid request
