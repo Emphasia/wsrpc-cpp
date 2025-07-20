@@ -45,7 +45,7 @@ auto init_logger() -> void
   spdlog::set_default_logger(logger);
 }
 
-auto cli(const int argc, const char* const argv[]) -> std::pair<std::string, int>
+auto cli(const int argc, const char* const argv[]) -> wsrpc::Options
 {
   const auto log_level_str = fmt::to_string(spdlog::level::to_string_view(log_level));
 
@@ -56,6 +56,7 @@ auto cli(const int argc, const char* const argv[]) -> std::pair<std::string, int
     ("l,level", "Set the log level", cxxopts::value<std::string>()->default_value(log_level_str))  //
     ("h,host", "Set the listening host", cxxopts::value<std::string>()->default_value("0.0.0.0"))  //
     ("p,port", "Set the listening port", cxxopts::value<int>()->default_value("8080"))             //
+    ("t,timeout", "Set the timeout before exit", cxxopts::value<size_t>()->default_value("60"))    //
     ;
 
   if (argc == 1) {
@@ -78,7 +79,10 @@ auto cli(const int argc, const char* const argv[]) -> std::pair<std::string, int
 
     spdlog::set_level(spdlog::level::from_str(result["level"].as<std::string>()));
 
-    return std::make_tuple(result["host"].as<std::string>(), result["port"].as<int>());
+    return {
+      .host = result["host"].as<std::string>(),
+      .port = result["port"].as<int>(),
+      .timeout_s = result["timeout"].as<size_t>()};
   }
   catch (const cxxopts::exceptions::exception& e) {
     std::cerr << "Error parsing options: " << e.what() << std::endl;
@@ -96,10 +100,10 @@ int main(const int argc, const char* const argv[])
 
   SPDLOG_DEBUG("debugging...");
 
-  auto [host, port] = cli(argc, argv);
+  wsrpc::Options options = cli(argc, argv);
 
   wsrpc::Server server;
-  server.serve(host, port);
+  server.serve(options);
 
   return 0;
 }

@@ -22,6 +22,12 @@
 
 namespace wsrpc
 {
+struct Options
+{
+  std::string host = "127.0.0.1";
+  int port = 8080;
+  size_t timeout_s = 5;
+};
 
 template <std::derived_from<App> App_t = App>
 requires std::default_initializable<App_t>
@@ -88,7 +94,7 @@ struct Server
     ws->send(pkg.resp, uWS::OpCode::TEXT);
   }
 
-  static void serve(const std::string host, const int port)
+  static void serve(const Options& options)
   {
     ScheduledTask task;
     uWS::App u;
@@ -168,22 +174,22 @@ struct Server
            count--;
            uWS::Loop::get()->defer([&]() {
              if (count > 0) return;
-             SPDLOG_INFO("Exiting in 5 seconds...");
+             SPDLOG_INFO("Exiting in {} seconds...", options.timeout_s);
              task.schedule(
                "exit",
                [&]() {
                  SPDLOG_INFO("Exiting...");
                  u.close();
                },
-               std::chrono::seconds(5));
+               std::chrono::seconds(options.timeout_s));
            });
          }});
-    u.listen(host, port, [&](auto* listen_socket) {
+    u.listen(options.host, options.port, [&](auto* listen_socket) {
       if (!listen_socket) {
-        SPDLOG_CRITICAL("Unavailable on {}:{}", host, port);
+        SPDLOG_CRITICAL("Unavailable on {}:{}", options.host, options.port);
         throw std::runtime_error("Unavailable");
       }
-      SPDLOG_INFO("Listening on {}:{}", host, port);
+      SPDLOG_INFO("Listening on {}:{}", options.host, options.port);
     });
     u.run();
   }

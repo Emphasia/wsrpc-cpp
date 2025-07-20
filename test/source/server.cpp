@@ -103,7 +103,7 @@ TEST_SUITE("server")
     static const auto port = 9001;
 
     wsrpc::Server server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
 
     auto code = R"(
 import sys
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     };
 
     wsrpc::Server<AppT> server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
 
     auto ret = std::system(
       fmt::to_string(
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     };
 
     wsrpc::Server<AppT> server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
 
     auto ret = std::system(
       fmt::to_string(
