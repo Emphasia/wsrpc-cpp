@@ -35,6 +35,7 @@ struct Server
 
   static package_t handle(SocketData& sd, std::string_view raw)
   {
+    TIMEIT;
     assert(sd.app);
     request_t request{};
     response_t response{.result = "null"};

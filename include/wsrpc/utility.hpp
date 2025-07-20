@@ -1,11 +1,14 @@
 #pragma once
 
+#include <chrono>
 #include <cstddef>
 #include <fstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include <spdlog/spdlog.h>
 
 namespace wsrpc
 {
@@ -142,5 +145,37 @@ inline std::string encode_base64(const std::vector<std::byte>& input)
 
   return encoded;
 }
+
+class Timer
+{
+public:
+  explicit Timer(std::string_view context) : context_(context), start_(std::chrono::high_resolution_clock::now())
+  {
+  }
+
+  ~Timer()
+  {
+    if (!cancelled_) {
+      const auto end = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> ms = end - start_;
+      SPDLOG_DEBUG("{} took {:.3f} ms", context_, ms.count());
+    }
+  }
+
+  Timer(const Timer&) = delete;
+  Timer& operator=(const Timer&) = delete;
+
+  void cancel() noexcept
+  {
+    cancelled_ = true;
+  }
+
+private:
+  std::string_view context_;
+  const std::chrono::time_point<std::chrono::high_resolution_clock> start_;
+  bool cancelled_ = false;
+};
+
+#define TIMEIT wsrpc::Timer _timeit_timer(__FUNCTION__)
 
 }  // namespace wsrpc
