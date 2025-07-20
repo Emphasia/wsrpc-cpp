@@ -19,6 +19,8 @@ include(../cmake/doctest.cmake)
 file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(${PROJECT_NAME} ${sources})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE ROOTPATH="${CMAKE_CURRENT_SOURCE_DIR}")
+
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 23)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)

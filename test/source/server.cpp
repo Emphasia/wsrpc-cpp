@@ -1,6 +1,11 @@
+#include <filesystem>
+
 #include <doctest/doctest.h>
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
+#include <wsrpc/app.hpp>
+#include <wsrpc/message.hpp>
 #include <wsrpc/server.hpp>
 
 std::optional<std::string> execute(const std::string& command)
@@ -92,10 +97,10 @@ TEST_SUITE("server")
     CHECK(response.error.value() == "Method Unavaiable : \"unknown_method\"");
   }
 
-  TEST_CASE("Server serve function")
+  TEST_CASE("Server serve function echo")
   {
-    constexpr auto host = "127.0.0.1";
-    constexpr auto port = 9001;
+    static const auto host = "127.0.0.1";
+    static const auto port = 9001;
 
     wsrpc::Server server;
     auto s = std::jthread([&]() { server.serve(host, port); });
@@ -122,5 +127,69 @@ if __name__ == '__main__':
     auto ret = execute(fmt::format("python -c \"{}\" ws://{}:{}", code, host, port).c_str());
     REQUIRE(ret);
     CHECK(*ret == R"({"id":"1","result":{}})");
+  }
+
+  TEST_CASE("Server serve function data")
+  {
+    static const auto path = std::filesystem::path(ROOTPATH);
+    static const auto host = "127.0.0.1";
+    static const auto port = 9001;
+
+    struct AppT : wsrpc::App
+    {
+      struct Data
+      {
+        glz::json_t json_commit;
+        glz::json_t json_tree;
+        wsrpc::binary_t jpg_404;
+        wsrpc::binary_t jpg_landing;
+      };
+
+      static Data load()
+      {
+        const std::filesystem::path _path = path / "data";
+        return Data{
+          .json_commit = glz::read_json<glz::json_t>(wsrpc::read_text(_path / "latest-commit@pbr-book.json")).value(),
+          .json_tree = glz::read_json<glz::json_t>(wsrpc::read_text(_path / "tree-commit-info@pbr-book.json")).value(),
+          .jpg_404 = wsrpc::read_bytes(_path / "404@pbr-book.jpg"),
+          .jpg_landing = wsrpc::read_bytes(_path / "landing@pbr-book.jpg"),
+        };
+      }
+
+      const Data data = load();
+
+      AppT() : App()
+      {
+        regist("test0", [&](const wsrpc::rawjson_t&) -> wsrpc::package_t {
+          return {data.json_tree.dump().value(), {data.jpg_landing}};
+        });
+        regist("test1", [&](const wsrpc::rawjson_t&) -> wsrpc::package_t {
+          auto j = data.json_tree;
+          j["data"] = wsrpc::encode_base64(data.jpg_landing);
+          return {j.dump().value(), {}};
+        });
+      }
+    };
+
+    wsrpc::Server<AppT> server;
+    auto s = std::jthread([&]() {
+      server.serve(host, port);
+      // TODO
+      server.serve(host, port);
+    });
+
+    auto ret = std::system(
+      fmt::to_string(
+        fmt::join(
+          {
+            //
+            fmt::format("cd {}", path.string()),                                 //
+            fmt::format("python client.py ws://{}:{} {}", host, port, "test0"),  //
+            fmt::format("python client.py ws://{}:{} {}", host, port, "test1"),  //
+          },                                                                     //
+          " && "))
+        .c_str());
+    std::cout << "py exited with: " << ret << std::endl;
+    CHECK(ret == 0);
   }
 }

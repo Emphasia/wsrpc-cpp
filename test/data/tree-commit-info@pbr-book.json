@@ -1,0 +1,236 @@
+{
+    "3ed-2018": {
+        "oid": "efd0cebb562c99aca2461fa53e5e1fec91ad22fa",
+        "url": "/mmp/pbr-book-website/commit/efd0cebb562c99aca2461fa53e5e1fec91ad22fa",
+        "date": "2023-01-25T11:56:46.000-08:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/efd0cebb562c99aca2461fa53e5e1fec91ad22fa\">update</a>"
+    },
+    "4ed": {
+        "oid": "f6d66f0a6e31c3d3ed6a0756c3ad7b4af2dd8c4c",
+        "url": "/mmp/pbr-book-website/commit/f6d66f0a6e31c3d3ed6a0756c3ad7b4af2dd8c4c",
+        "date": "2024-01-25T15:27:46.000-08:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/f6d66f0a6e31c3d3ed6a0756c3ad7b4af2dd8c4c\">update</a>"
+    },
+    "fontawesome-free-5.15.3-web": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "404.html": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "404.jpg": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "LICENSE.txt": {
+        "oid": "e032d25b8d9dcfea2739235fcc31d57f0248f2ad",
+        "url": "/mmp/pbr-book-website/commit/e032d25b8d9dcfea2739235fcc31d57f0248f2ad",
+        "date": "2021-05-10T12:45:24.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e032d25b8d9dcfea2739235fcc31d57f0248f2ad\">update</a>"
+    },
+    "README.md": {
+        "oid": "e032d25b8d9dcfea2739235fcc31d57f0248f2ad",
+        "url": "/mmp/pbr-book-website/commit/e032d25b8d9dcfea2739235fcc31d57f0248f2ad",
+        "date": "2021-05-10T12:45:24.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e032d25b8d9dcfea2739235fcc31d57f0248f2ad\">update</a>"
+    },
+    "android-chrome-192x192.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "android-chrome-256x256.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "android-chrome-512x512.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "apple-touch-icon.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "bootstrap.min.css": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "bootstrap.min.css.map": {
+        "oid": "02b496ae12670f8ffec2a6fe67cc30b07e57cba6",
+        "url": "/mmp/pbr-book-website/commit/02b496ae12670f8ffec2a6fe67cc30b07e57cba6",
+        "date": "2021-05-10T13:50:05.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/02b496ae12670f8ffec2a6fe67cc30b07e57cba6\">update</a>"
+    },
+    "browserconfig.xml": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "domine.ttf": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "exr-wrap.js": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "exr-wrap.js.mem": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "exr.worker.js": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "exr.worker.js.map": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "favicon-16x16.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "favicon-32x32.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "favicon.ico": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "fonts.css": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "index.html": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "jeri.js": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "jeri.js.map": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "jeri.min.js": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "jeri.min.js.map": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "landing.jpg": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "landscape-above.png": {
+        "oid": "e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "url": "/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e",
+        "date": "2021-04-13T08:12:42.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Initial commit.\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/e3cdb5f0b5e6551eaac2c50a86b8174ae1ce550e\">Initial commit.</a>"
+    },
+    "mitpress.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "mstile-150x150.png": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "react-dom.js": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "react-dom.min.js": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "react.js": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "react.min.js": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "robotomono.ttf": {
+        "oid": "bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "url": "/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26",
+        "date": "2021-05-10T13:45:18.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"Host our own fonts and JS\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/bf07cff7d0bb569ee9f580a46cf50a0a8dc22d26\">Host our own fonts and JS</a>"
+    },
+    "safari-pinned-tab.svg": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    },
+    "site.webmanifest": {
+        "oid": "23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "url": "/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9",
+        "date": "2023-11-01T14:57:03.000-07:00",
+        "shortMessageHtmlLink": "<a data-pjax=\"true\" title=\"update\" class=\"Link--secondary\" href=\"/mmp/pbr-book-website/commit/23ffbe774180708b5d2907e4fa0551a6410f3ff9\">update</a>"
+    }
+}
