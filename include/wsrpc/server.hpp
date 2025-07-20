@@ -21,7 +21,6 @@ struct Server
   /* ws->getUserData returns one of these */
   struct SocketData
   {
-    /* Fill with user data */
     App app{};
   };
 
@@ -94,15 +93,15 @@ struct Server
        .upgrade = nullptr,
        .open =
          [&]([[maybe_unused]] auto* ws) {
-           /* Open event here, you may access ws->getUserData() which points to a SocketData struct */
+           /* This connection opened */
            SPDLOG_INFO("Socket opened");
            init(*ws->getUserData());
            SPDLOG_INFO("Socket initialized");
          },
        .message =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
-           /* You may access ws->getUserData() here */
-           SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
+           /* A message received */
+           SPDLOG_DEBUG("Message received: {}, {}", std::to_string(opCode), message);
            switch (opCode) {
              case uWS::OpCode::TEXT: {
                assert(not glz::validate_json(message));
@@ -117,33 +116,33 @@ struct Server
                break;
              }
              default:
-               SPDLOG_CRITICAL("Unexpected opcode", std::to_string(opCode));
+               SPDLOG_CRITICAL("Unexpected OpCode: {}", std::to_string(opCode));
                break;
            }
          },
        .dropped =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
-           /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
+           /* A sending message dropped */
            SPDLOG_WARN("Message dropped: {}, {}", std::to_string(opCode), message);
          },
        .drain =
          [&]([[maybe_unused]] auto* ws) {
-           /* Check ws->getBufferedAmount() here */
+           /* All sending messages drained */
            SPDLOG_WARN("Message drained");
          },
        .ping =
          [&]([[maybe_unused]] auto* ws, std::string_view message) {
-           /* Not implemented yet */
+           /* A ping message received */
            SPDLOG_DEBUG("Message ping received: {}", message);
          },
        .pong =
          [&]([[maybe_unused]] auto* ws, std::string_view message) {
-           /* Not implemented yet */
+           /* A pong message received */
            SPDLOG_DEBUG("Message pong received: {}", message);
          },
        .close =
          [&]([[maybe_unused]] auto* ws, int code, std::string_view message) {
-           /* You may access ws->getUserData() here */
+           /* This connection closing */
            SPDLOG_INFO("Socket closed: {}, {}", code, message);
            uWS::Loop::get()->defer([&]() {
              SPDLOG_INFO("Exiting...");
