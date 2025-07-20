@@ -71,85 +71,87 @@ struct Server
 
   static void serve(const std::string host, const int port)
   {
-    uWS::App()
-      .ws<SocketData>(
-        "/*",
-        {/* Settings */
-         .compression = uWS::DISABLED,
-         .maxPayloadLength = 10 * 1024 * 1024,
-         .idleTimeout = 60,
-         .maxBackpressure = 100 * 1024 * 1024,
-         .closeOnBackpressureLimit = false,
-         .resetIdleTimeoutOnSend = true,
-         .sendPingsAutomatically = true,
+    uWS::App u;
+    u.ws<SocketData>(
+      "/*",
+      {/* Settings */
+       .compression = uWS::DISABLED,
+       .maxPayloadLength = 10 * 1024 * 1024,
+       .idleTimeout = 60,
+       .maxBackpressure = 100 * 1024 * 1024,
+       .closeOnBackpressureLimit = false,
+       .resetIdleTimeoutOnSend = true,
+       .sendPingsAutomatically = true,
 
-         /* Handlers */
-         .upgrade = nullptr,
-         .open =
-           []([[maybe_unused]] auto* ws) {
-             /* Open event here, you may access ws->getUserData() which points to a SocketData struct */
-             SPDLOG_INFO("Socket opened");
-             init(*ws->getUserData());
-             SPDLOG_INFO("Socket initialized");
-           },
-         .message =
-           []([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
-             /* You may access ws->getUserData() here */
-             SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
-             switch (opCode) {
-               case uWS::OpCode::TEXT: {
-                 assert(not glz::validate_json(message));
-                 auto [resp, atts] = handle(*ws->getUserData(), message);
-                 SPDLOG_DEBUG("Response +{} generated: {}", atts.size(), resp);
-                 assert(not glz::validate_json(resp));
-                 for (auto& att : atts) ws->send(sv(att), uWS::OpCode::BINARY);
-                 ws->send(resp, uWS::OpCode::TEXT);
-                 break;
-               }
-               case uWS::OpCode::BINARY: {
-                 SPDLOG_ERROR("Binary message received but not supported");
-                 break;
-               }
-               default:
-                 SPDLOG_CRITICAL("Unexpected opcode", std::to_string(opCode));
-                 break;
+       /* Handlers */
+       .upgrade = nullptr,
+       .open =
+         [&]([[maybe_unused]] auto* ws) {
+           /* Open event here, you may access ws->getUserData() which points to a SocketData struct */
+           SPDLOG_INFO("Socket opened");
+           init(*ws->getUserData());
+           SPDLOG_INFO("Socket initialized");
+         },
+       .message =
+         [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
+           /* You may access ws->getUserData() here */
+           SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
+           switch (opCode) {
+             case uWS::OpCode::TEXT: {
+               assert(not glz::validate_json(message));
+               auto [resp, atts] = handle(*ws->getUserData(), message);
+               SPDLOG_DEBUG("Response +{} generated: {}", atts.size(), resp);
+               assert(not glz::validate_json(resp));
+               for (auto& att : atts) ws->send(sv(att), uWS::OpCode::BINARY);
+               ws->send(resp, uWS::OpCode::TEXT);
+               break;
              }
-           },
-         .dropped =
-           []([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
-             /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
-             SPDLOG_WARN("Message dropped: {}, {}", std::to_string(opCode), message);
-           },
-         .drain =
-           []([[maybe_unused]] auto* ws) {
-             /* Check ws->getBufferedAmount() here */
-             SPDLOG_WARN("Message drained");
-           },
-         .ping =
-           []([[maybe_unused]] auto* ws, std::string_view message) {
-             /* Not implemented yet */
-             SPDLOG_DEBUG("Message ping received: {}", message);
-           },
-         .pong =
-           []([[maybe_unused]] auto* ws, std::string_view message) {
-             /* Not implemented yet */
-             SPDLOG_DEBUG("Message pong received: {}", message);
-           },
-         .close =
-           []([[maybe_unused]] auto* ws, int code, std::string_view message) {
-             /* You may access ws->getUserData() here */
-             SPDLOG_INFO("Socket closed: {}, {}", code, message);
-           }})
-      .listen(
-        host,
-        port,
-        [&](auto* listen_socket) {
-          if (!listen_socket) {
-            SPDLOG_CRITICAL("Unavailable on {}:{}", host, port);
-          }
-          SPDLOG_INFO("Listening on {}:{}", host, port);
-        })
-      .run();
+             case uWS::OpCode::BINARY: {
+               SPDLOG_ERROR("Binary message received but not supported");
+               break;
+             }
+             default:
+               SPDLOG_CRITICAL("Unexpected opcode", std::to_string(opCode));
+               break;
+           }
+         },
+       .dropped =
+         [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
+           /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
+           SPDLOG_WARN("Message dropped: {}, {}", std::to_string(opCode), message);
+         },
+       .drain =
+         [&]([[maybe_unused]] auto* ws) {
+           /* Check ws->getBufferedAmount() here */
+           SPDLOG_WARN("Message drained");
+         },
+       .ping =
+         [&]([[maybe_unused]] auto* ws, std::string_view message) {
+           /* Not implemented yet */
+           SPDLOG_DEBUG("Message ping received: {}", message);
+         },
+       .pong =
+         [&]([[maybe_unused]] auto* ws, std::string_view message) {
+           /* Not implemented yet */
+           SPDLOG_DEBUG("Message pong received: {}", message);
+         },
+       .close =
+         [&]([[maybe_unused]] auto* ws, int code, std::string_view message) {
+           /* You may access ws->getUserData() here */
+           SPDLOG_INFO("Socket closed: {}, {}", code, message);
+           uWS::Loop::get()->defer([&]() {
+             SPDLOG_INFO("Exiting...");
+             u.close();  // TODO
+           });
+         }});
+    u.listen(host, port, [&](auto* listen_socket) {
+      if (!listen_socket) {
+        SPDLOG_CRITICAL("Unavailable on {}:{}", host, port);
+        throw std::runtime_error("Unavailable");
+      }
+      SPDLOG_INFO("Listening on {}:{}", host, port);
+    });
+    u.run();
   }
 };
 
