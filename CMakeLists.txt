@@ -37,16 +37,16 @@ file(GLOB_RECURSE files CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/source/*.cpp")
 
 # ---- Create library ----
 
-add_library(${PROJECT_NAME} ${files})
+add_library(${PROJECT_NAME} STATIC ${files})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 23)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_SCAN_FOR_MODULES OFF)
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
-target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                         $<INSTALL_INTERFACE:include>
+target_include_directories(${PROJECT_NAME}
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include>
 )
 
 # ---- Add dependencies ----
@@ -54,18 +54,20 @@ target_include_directories(
 include(cmake/CPM.cmake)
 include(cmake/fmt.cmake)
 include(cmake/spdlog.cmake)
+include(cmake/glaze.cmake)
 include(cmake/uWebSockets.cmake)
 include(cmake/thread_pool.cmake)
-include(cmake/glaze.cmake)
 
 # ---- Link dependencies ----
 
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  fmt::fmt
-  spdlog::spdlog
-  uWebSockets
-  BS_thread_pool
-  glaze::glaze
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    fmt::fmt
+    spdlog::spdlog
+    glaze::glaze
+  PRIVATE
+    uWebSockets
+    BS_thread_pool
 )
 
 # ---- Set dependencies ----
@@ -124,5 +126,9 @@ if(wsrpc_BUILD_INSTALL)
     INCLUDE_DESTINATION include
     VERSION_HEADER ${PROJECT_NAME}/version.h
     COMPATIBILITY SameMajorVersion
+    DEPENDENCIES "fmt;spdlog;glaze"
   )
+  install(TARGETS uSockets EXPORT wsrpcTargets)
+  install(TARGETS uWebSockets EXPORT wsrpcTargets)
+  install(TARGETS BS_thread_pool EXPORT wsrpcTargets)
 endif()

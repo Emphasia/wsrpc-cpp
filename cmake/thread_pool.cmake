@@ -12,5 +12,3 @@ CPMAddPackage(
 
 add_library(BS_thread_pool INTERFACE)
 target_include_directories(BS_thread_pool SYSTEM INTERFACE ${BS_thread_pool_SOURCE_DIR}/include)
-
-install(TARGETS BS_thread_pool EXPORT wsrpcTargets)

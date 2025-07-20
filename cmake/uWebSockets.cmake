@@ -31,6 +31,3 @@ add_library(uWebSockets INTERFACE)
 target_include_directories(uWebSockets SYSTEM INTERFACE ${uWebSockets_SOURCE_DIR}/src)
 target_compile_definitions(uWebSockets INTERFACE UWS_NO_ZLIB)
 target_link_libraries(uWebSockets INTERFACE uSockets)
-
-install(TARGETS uSockets EXPORT wsrpcTargets)
-install(TARGETS uWebSockets EXPORT wsrpcTargets)

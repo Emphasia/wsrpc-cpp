@@ -66,8 +66,7 @@ int main(const int argc, const char* const argv[])
 
   wsrpc::Options options = cli(argc, argv);
 
-  wsrpc::Server server;
-  server.serve(options);
+  wsrpc::serve(options);
 
   return 0;
 }

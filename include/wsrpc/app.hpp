@@ -14,17 +14,20 @@
 namespace wsrpc
 {
 
-struct App
+class App
 {
+public:
   using return_t = std::expected<package_t, std::string>;
   using handler_t = std::move_only_function<return_t(rawjson_t)>;
 
+public:
   struct
   {
     std::shared_mutex mutex = {};
     std::flat_map<std::string, std::shared_ptr<handler_t>> registry = {};
   } handlers = {};
 
+public:
   App()
   {
     SPDLOG_INFO("App created");

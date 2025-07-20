@@ -27,28 +27,19 @@ std::optional<std::string> execute(const std::string& command)
 
 TEST_SUITE("server")
 {
-  TEST_CASE("SocketData initialization")
+  TEST_CASE("Server process function with valid request")
   {
-    wsrpc::Server<>::SocketData socket_data;
-    wsrpc::Server<>::build(socket_data);
-
-    CHECK(socket_data.app != nullptr);
-  }
-
-  TEST_CASE("Server handle function with valid request")
-  {
-    wsrpc::Server<>::SocketData socket_data;
-    wsrpc::Server<>::build(socket_data);
+    wsrpc::App app;
 
     // Register a test handler
-    socket_data.app->regist("test_method", [](const wsrpc::rawjson_t&) {
+    app.regist("test_method", [](const wsrpc::rawjson_t&) {
       wsrpc::package_t package{R"({"result": "success"})", {}};
       return package;
     });
 
     // Test handling a valid request
     std::string_view valid_request = R"({"id": "1", "method": "test_method", "params": {}})";
-    auto result = wsrpc::Server<>::handle(*socket_data.app, valid_request);
+    auto result = wsrpc::process(app, valid_request);
 
     CHECK_FALSE(glz::validate_json(result.resp));
 
@@ -61,14 +52,13 @@ TEST_SUITE("server")
     CHECK_FALSE(response.error.has_value());
   }
 
-  TEST_CASE("Server handle function with invalid JSON")
+  TEST_CASE("Server process function with invalid JSON")
   {
-    wsrpc::Server<>::SocketData socket_data;
-    wsrpc::Server<>::build(socket_data);
+    wsrpc::App app;
 
     // Test handling an invalid request (malformed JSON)
     std::string_view invalid_request = R"({"id": "1", "method": "test_method")";  // Missing closing brace
-    auto result = wsrpc::Server<>::handle(*socket_data.app, invalid_request);
+    auto result = wsrpc::process(app, invalid_request);
 
     CHECK_FALSE(glz::validate_json(result.resp));
 
@@ -82,14 +72,13 @@ TEST_SUITE("server")
     CHECK(response.error.value().starts_with("Invalid Request : "));
   }
 
-  TEST_CASE("Server handle function with unknown method")
+  TEST_CASE("Server process function with unknown method")
   {
-    wsrpc::Server<>::SocketData socket_data;
-    wsrpc::Server<>::build(socket_data);
+    wsrpc::App app;
 
     // Test handling a request for an unregistered method
     std::string_view unknown_request = R"({"id": "1", "method": "unknown_method", "params": {}})";
-    auto result = wsrpc::Server<>::handle(*socket_data.app, unknown_request);
+    auto result = wsrpc::process(app, unknown_request);
 
     CHECK_FALSE(glz::validate_json(result.resp));
 
@@ -108,8 +97,7 @@ TEST_SUITE("server")
     static const auto host = "127.0.0.1";
     static const auto port = 9001;
 
-    wsrpc::Server server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(wsrpc::serve<wsrpc::App>({host, port})); });
 
     auto code = R"(
 import sys
@@ -177,8 +165,7 @@ if __name__ == '__main__':
       }
     };
 
-    wsrpc::Server<AppT> server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(wsrpc::serve<AppT>({host, port})); });
 
     auto ret = std::system(
       fmt::to_string(
@@ -212,8 +199,7 @@ if __name__ == '__main__':
       }
     };
 
-    wsrpc::Server<AppT> server;
-    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve({host, port})); });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(wsrpc::serve<AppT>({host, port})); });
 
     auto ret = std::system(
       fmt::to_string(
