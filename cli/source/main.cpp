@@ -3,11 +3,14 @@
 #include <string>
 
 #include <cxxopts.hpp>
+#include <fmt/format.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
+#include <wsrpc/server.hpp>
 #include <wsrpc/version.h>
-#include <wsrpc/wsrpc.h>
+
+static constexpr auto log_level = spdlog::level::level_enum(SPDLOG_ACTIVE_LEVEL);
 
 void terminate_handler() noexcept
 {
@@ -42,55 +45,61 @@ auto init_logger() -> void
   spdlog::set_default_logger(logger);
 }
 
-auto cli(int argc, char** argv) -> int
+auto cli(const int argc, const char* const argv[]) -> std::pair<std::string, int>
 {
-  static const auto level = fmt::format(spdlog::level::to_string_view(spdlog::level::level_enum(SPDLOG_ACTIVE_LEVEL)));
+  const auto log_level_str = fmt::to_string(spdlog::level::to_string_view(log_level));
 
   cxxopts::Options options(*argv, "A program to welcome the world!");
-  options.add_options()                                                                    //
-    ("h,help", "Print the help")                                                           //
-    ("v,version", "Print the version number")                                              //
-    ("l,level", "Set the log level", cxxopts::value<std::string>()->default_value(level))  //
+  options.add_options()                                                                            //
+    ("help", "Print the help")                                                                     //
+    ("version", "Print the version number")                                                        //
+    ("l,level", "Set the log level", cxxopts::value<std::string>()->default_value(log_level_str))  //
+    ("h,host", "Set the listening host", cxxopts::value<std::string>()->default_value("0.0.0.0"))  //
+    ("p,port", "Set the listening port", cxxopts::value<int>()->default_value("8080"))             //
     ;
 
   if (argc == 1) {
     std::cout << options.help() << std::endl;
-    return 0;
+    std::exit(0);
   }
 
   try {
-    auto result = options.parse(argc, argv);
+    const auto result = options.parse(argc, argv);
 
     if (result["help"].as<bool>()) {
       std::cout << options.help() << std::endl;
-      return 0;
+      std::exit(0);
     }
 
     if (result["version"].as<bool>()) {
       std::cout << "wsrpc, version " << WSRPC_VERSION << std::endl;
-      return 0;
+      std::exit(0);
     }
 
     spdlog::set_level(spdlog::level::from_str(result["level"].as<std::string>()));
+
+    return std::make_tuple(result["host"].as<std::string>(), result["port"].as<int>());
   }
   catch (const cxxopts::exceptions::exception& e) {
     std::cerr << "Error parsing options: " << e.what() << std::endl;
     std::cerr << std::endl;
     std::cerr << options.help() << std::endl;
-    return 1;
+    std::exit(1);
   }
-
-  return 0;
 }
 
-int main(int argc, char** argv)
+int main(const int argc, const char* const argv[])
 {
   init_logger();
+
   std::set_terminate(terminate_handler);
 
-  cli(argc, argv);
-
   SPDLOG_DEBUG("debugging...");
+
+  auto [host, port] = cli(argc, argv);
+
+  wsrpc::Server server;
+  server.serve(host, port);
 
   return 0;
 }

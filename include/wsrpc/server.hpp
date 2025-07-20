@@ -1,0 +1,151 @@
+#pragma once
+
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+#include <App.h>
+#include <fmt/format.h>
+#include <glaze/glaze.hpp>
+#include <spdlog/spdlog.h>
+
+#include "app.hpp"
+#include "message.hpp"
+#include "utility.hpp"
+
+namespace wsrpc
+{
+
+struct Server
+{
+  /* ws->getUserData returns one of these */
+  struct SocketData
+  {
+    /* Fill with user data */
+    App app{};
+  };
+
+  static void init(SocketData& sd)
+  {
+  }
+
+  using attachs_t = std::vector<std::vector<std::byte>>;
+  using package_t = std::pair<std::string, attachs_t>;
+
+  static package_t handle(SocketData& sd, std::string_view raw)
+  {
+    request_t request{};
+    response_t response{};
+    auto pack = [](const response_t& resp, attachs_t&& atts = {}) -> package_t {
+      auto pr = glz::write_json(resp);
+      if (!pr) [[unlikely]] {
+        auto error_msg = error::format(error::INVALID_RESPONSE, glz::format_error(pr.error()));
+        SPDLOG_ERROR(error_msg);
+        auto parse_error = resp;
+        parse_error.error = error_msg;
+        return {glz::write_json(parse_error).value(), {}};
+      }
+      return {std::move(pr).value(), std::move(atts)};
+    };
+    auto pe = glz::read_json(request, raw);
+    if (pe) [[unlikely]] {
+      auto error_msg = error::format(error::INVALID_REQUEST, glz::format_error(pe, raw));
+      SPDLOG_ERROR(error_msg);
+      response.error = error_msg;
+      return pack(response);
+    }
+    response.id = request.id;
+    auto result = sd.app.handle(request.method, request.params.str);
+    if (!result) {
+      SPDLOG_ERROR("Error calling {}: {}", raw, result.error());
+      response.error = result.error();
+      return pack(response);
+    }
+    response.result = std::move(result.value().first);
+    return pack(response, std::move(result.value().second));
+  }
+
+  static void serve(const std::string host, const int port)
+  {
+    uWS::App()
+      .ws<SocketData>(
+        "/*",
+        {/* Settings */
+         .compression = uWS::DISABLED,
+         .maxPayloadLength = 10 * 1024 * 1024,
+         .idleTimeout = 60,
+         .maxBackpressure = 100 * 1024 * 1024,
+         .closeOnBackpressureLimit = false,
+         .resetIdleTimeoutOnSend = true,
+         .sendPingsAutomatically = true,
+
+         /* Handlers */
+         .upgrade = nullptr,
+         .open =
+           [](auto* ws) {
+             /* Open event here, you may access ws->getUserData() which points to a SocketData struct */
+             SPDLOG_INFO("Socket opened");
+             init(*ws->getUserData());
+             SPDLOG_INFO("Socket initialized");
+           },
+         .message =
+           [](auto* ws, std::string_view message, uWS::OpCode opCode) {
+             /* You may access ws->getUserData() here */
+             SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
+             switch (opCode) {
+               case uWS::OpCode::TEXT: {
+                 auto [resp, atts] = handle(*ws->getUserData(), message);
+                 SPDLOG_DEBUG("Response +{} generated: {}", atts.size(), resp);
+                 for (auto& att : atts) ws->send(sv(att), uWS::OpCode::BINARY);
+                 ws->send(resp, uWS::OpCode::TEXT);
+                 break;
+               }
+               case uWS::OpCode::BINARY: {
+                 SPDLOG_ERROR("Binary message received but not supported");
+                 break;
+               }
+               default:
+                 SPDLOG_CRITICAL("Unexpected opcode", std::to_string(opCode));
+                 break;
+             }
+           },
+         .dropped =
+           [](auto* ws, std::string_view message, uWS::OpCode opCode) {
+             /* A message was dropped due to set maxBackpressure and closeOnBackpressureLimit limit */
+             SPDLOG_WARN("Message dropped: {}, {}", std::to_string(opCode), message);
+           },
+         .drain =
+           [](auto* ws) {
+             /* Check ws->getBufferedAmount() here */
+             SPDLOG_WARN("Message drained");
+           },
+         .ping =
+           [](auto* ws, std::string_view message) {
+             /* Not implemented yet */
+             SPDLOG_DEBUG("Message ping received");
+           },
+         .pong =
+           [](auto* ws, std::string_view message) {
+             /* Not implemented yet */
+             SPDLOG_DEBUG("Message pong received");
+           },
+         .close =
+           [](auto* ws, int code, std::string_view message) {
+             /* You may access ws->getUserData() here */
+             SPDLOG_INFO("Socket closed: {}, {}", code, message);
+           }})
+      .listen(
+        host,
+        port,
+        [&](auto* listen_socket) {
+          if (!listen_socket) {
+            SPDLOG_CRITICAL("Unavaiable: {}:{}", host, port);
+          }
+          SPDLOG_INFO("Listening on {}:{}", host, port);
+        })
+      .run();
+  }
+};
+
+}  // namespace wsrpc
