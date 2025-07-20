@@ -46,7 +46,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                         $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+                         $<INSTALL_INTERFACE:include>
 )
 
 # ---- Add dependencies ----
@@ -117,10 +117,11 @@ if(wsrpc_BUILD_INSTALL)
   packageProject(
     NAME ${PROJECT_NAME}
     VERSION ${PROJECT_VERSION}
+    DISABLE_VERSION_SUFFIX ON
     NAMESPACE ${PROJECT_NAME}
     BINARY_DIR ${PROJECT_BINARY_DIR}
     INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-    INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
+    INCLUDE_DESTINATION include
     VERSION_HEADER ${PROJECT_NAME}/version.h
     COMPATIBILITY SameMajorVersion
   )
