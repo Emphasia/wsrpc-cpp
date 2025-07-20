@@ -6,6 +6,7 @@ CPMAddPackage(
   NAME glaze
   VERSION 5.5.0
   URL https://github.com/stephenberry/glaze/archive/refs/tags/v5.5.0.zip
+  EXCLUDE_FROM_ALL YES
   SYSTEM YES
   OPTIONS
     "glaze_INCLUDES_WITH_SYSTEM OFF"

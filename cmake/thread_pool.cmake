@@ -6,6 +6,7 @@ CPMAddPackage(
   NAME BS_thread_pool
   VERSION 5.0.0
   URL https://github.com/bshoshany/thread-pool/archive/refs/tags/v5.0.0.zip
+  EXCLUDE_FROM_ALL YES
   SYSTEM YES
 )
 

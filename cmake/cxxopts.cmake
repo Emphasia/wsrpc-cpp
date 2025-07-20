@@ -6,6 +6,7 @@ CPMAddPackage(
   NAME cxxopts
   VERSION 3.3.1
   URL https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.3.1.zip
+  EXCLUDE_FROM_ALL YES
   SYSTEM YES
   OPTIONS
     "CXXOPTS_BUILD_EXAMPLES OFF"

@@ -45,7 +45,6 @@ endif()
 
 enable_testing()
 
-include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${PROJECT_NAME})
 
 # ---- code coverage ----
