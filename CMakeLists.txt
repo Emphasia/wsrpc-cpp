@@ -53,6 +53,7 @@ include(cmake/CPM.cmake)
 include(cmake/fmt.cmake)
 include(cmake/spdlog.cmake)
 include(cmake/uWebSockets.cmake)
+include(cmake/thread_pool.cmake)
 include(cmake/glaze.cmake)
 
 # ---- Link dependencies ----
@@ -61,6 +62,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   fmt::fmt
   spdlog::spdlog
   uWebSockets
+  BS_thread_pool
   glaze::glaze
 )
 
