@@ -27,6 +27,7 @@ struct App
 
   App()
   {
+    regist("echo", [](const rawjson_t& params) -> return_t { return package_t{params, {}}; });
   }
 
   void regist(const std::string& method, handler_t&& handler)

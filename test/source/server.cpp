@@ -1,15 +1,28 @@
 #include <doctest/doctest.h>
+#include <fmt/format.h>
 
 #include <wsrpc/server.hpp>
+
+std::optional<std::string> execute(const std::string& command)
+{
+  FILE* pipe = popen(command.c_str(), "r");
+  if (!pipe) return std::nullopt;
+
+  char buffer[128];
+  std::string result;
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    result += buffer;
+  }
+
+  pclose(pipe);
+  return result;
+}
 
 TEST_SUITE("server")
 {
   TEST_CASE("SocketData initialization")
   {
     wsrpc::Server::SocketData socket_data;
-
-    // Test that SocketData is properly constructed with an App
-    CHECK(socket_data.app.handlers.empty());
   }
 
   TEST_CASE("Server init function")
@@ -83,5 +96,37 @@ TEST_SUITE("server")
     // CHECK(response.result.str.empty());
     REQUIRE(response.error.has_value());
     CHECK(response.error.value() == "Method Unavaiable : \"unknown_method\"");
+  }
+
+  TEST_CASE("Server serve function")
+  {
+    constexpr auto host = "127.0.0.1";
+    constexpr auto port = 9001;
+
+    wsrpc::Server server;
+    auto s = std::jthread([&]() { server.serve(host, port); });
+
+    auto code = R"(
+import sys
+import asyncio
+import aiohttp
+
+async def main(url):
+    session = aiohttp.ClientSession()
+    client = await session.ws_connect(url)
+    req = '{\"id\":\"1\",\"method\":\"echo\",\"params\":{}}'
+    await client.send_str(req)
+    res = await client.receive_str()
+    print(res, end='')
+    await client.close()
+    await session.close()
+
+if __name__ == '__main__':
+    target = sys.argv[1]
+    asyncio.run(main(target))
+)";
+    auto ret = execute(fmt::format("python -c \"{}\" ws://{}:{}", code, host, port).c_str());
+    REQUIRE(ret);
+    CHECK(*ret == R"({"id":"1","result":{}})");
   }
 }

@@ -35,8 +35,9 @@ TEST_SUITE("app")
   {
     wsrpc::App app;
 
-    // Test that app is constructed with empty handlers
-    CHECK(app.handlers.empty());
+    // Test that app is constructed with default handlers
+    REQUIRE(app.handlers.size() == 1);
+    CHECK(app.handlers.contains("echo"));
   }
 
   TEST_CASE("App registration and unregistration")
@@ -49,7 +50,7 @@ TEST_SUITE("app")
       return package;
     });
 
-    CHECK(app.handlers.size() == 1);
+    CHECK(app.handlers.size() == 2);
     CHECK(app.handlers.contains("test_method"));
 
     // Test registering another handler for the same method (should replace)
@@ -58,11 +59,11 @@ TEST_SUITE("app")
       return package;
     });
 
-    CHECK(app.handlers.size() == 1);
+    CHECK(app.handlers.size() == 2);
 
     // Test unregistering a handler
     app.unregist("test_method");
-    CHECK(app.handlers.empty());
+    CHECK(app.handlers.size() == 1);
   }
 
   TEST_CASE("App handle method")
