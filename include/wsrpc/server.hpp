@@ -101,6 +101,7 @@ struct Server
          [&]([[maybe_unused]] auto* ws) {
            /* This connection opened */
            SPDLOG_INFO("Socket opened");
+           SPDLOG_INFO("Remote at {}:{}", ws->getRemoteAddressAsText(), us_socket_remote_port(0, (us_socket_t*)ws));
          },
        .message =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
@@ -150,6 +151,7 @@ struct Server
          [&]([[maybe_unused]] auto* ws, int code, std::string_view message) {
            /* This connection closing */
            SPDLOG_INFO("Socket closed: {}, {}", code, message);
+           SPDLOG_INFO("Remote at {}:{}", ws->getRemoteAddressAsText(), us_socket_remote_port(0, (us_socket_t*)ws));
            uWS::Loop::get()->defer([&]() {
              SPDLOG_INFO("Exiting...");
              u.close();  // TODO
