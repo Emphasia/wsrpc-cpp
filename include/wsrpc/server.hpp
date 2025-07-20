@@ -1,10 +1,12 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <concepts>
 #include <ranges>
 #include <string>
 #include <string_view>
+#include <thread>
 
 #include <App.h>
 #include <BS_thread_pool.hpp>
@@ -19,8 +21,6 @@
 namespace wsrpc
 {
 
-static BS::thread_pool pool;
-
 template <std::derived_from<App> App_t = App>
 requires std::default_initializable<App_t>
 struct Server
@@ -28,6 +28,9 @@ struct Server
   /* ws->getUserData returns one of these */
   struct SocketData
   {
+    using Pool_t = BS::thread_pool<>;
+    std::shared_ptr<Pool_t> pool =
+      std::make_shared<Pool_t>(std::clamp((int)std::thread::hardware_concurrency() / 3, 8, 24));
     std::unique_ptr<App_t> app = std::make_unique<App_t>();
   };
 
@@ -107,11 +110,14 @@ struct Server
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
            /* A message received */
            SPDLOG_DEBUG("Message received: {}, {}", std::to_string(opCode), message);
+           auto& sd = *ws->getUserData();
            switch (opCode) {
              case uWS::OpCode::TEXT: {
-               pool.detach_task([loop = uWS::Loop::get(), ws, message = std::string(message)]() {
+               sd.pool->detach_task([loop = uWS::Loop::get(), ws, message = std::string(message)]() {
+                 if (us_socket_is_closed(0, (us_socket_t*)ws)) return;
+                 auto& sd = *ws->getUserData();
                  assert(not glz::validate_json(message));
-                 auto pkg = handle(*ws->getUserData(), message);
+                 auto pkg = handle(sd, message);
                  SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
                  assert(not glz::validate_json(pkg.resp));
                  loop->defer([ws, pkg = std::move(pkg)]() { Server::reply(ws, pkg); });
