@@ -1,11 +1,13 @@
 #include <atomic>
 #include <chrono>
+#include <iostream>
 #include <memory>
 #include <random>
 #include <thread>
 #include <vector>
 
 #include <doctest/doctest.h>
+#include <spdlog/spdlog.h>
 
 #include <wsrpc/app.hpp>
 
@@ -103,6 +105,17 @@ TEST_SUITE("app")
 
   TEST_CASE("App thread safety" * doctest::timeout(10.0))
   {
+    const auto _spdlog_guard_ = [](auto l) {
+      auto _l = spdlog::get_level();
+      auto _f = [_l](int*) {
+        spdlog::set_level(_l);
+        std::cout << "Reset log level: " << _l << std::endl;
+      };
+      spdlog::set_level(l);
+      std::cout << "Set log level: " << l << std::endl;
+      return std::unique_ptr<int, decltype(_f)>((int*)&_f, _f);
+    }(spdlog::level::warn);
+
     wsrpc::App app;
 
     // Add initial method
@@ -173,6 +186,17 @@ TEST_SUITE("app")
 
   TEST_CASE("App concurrent handle calls" * doctest::timeout(5.0))
   {
+    const auto _spdlog_guard_ = [](auto l) {
+      auto _l = spdlog::get_level();
+      auto _f = [_l](int*) {
+        spdlog::set_level(_l);
+        std::cout << "Reset log level: " << _l << std::endl;
+      };
+      spdlog::set_level(l);
+      std::cout << "Set log level: " << l << std::endl;
+      return std::unique_ptr<int, decltype(_f)>((int*)&_f, _f);
+    }(spdlog::level::warn);
+
     wsrpc::App app;
 
     // Register a method that takes some time to execute
