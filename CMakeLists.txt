@@ -60,7 +60,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 # ---- Set dependencies ----
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE "SPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_INFO>")
+target_compile_definitions(${PROJECT_NAME} PUBLIC "SPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_INFO>")
 
 # ---- Handle includes ----
 
