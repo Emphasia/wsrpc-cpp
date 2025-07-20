@@ -6,6 +6,7 @@
 #include <string_view>
 
 #include <App.h>
+#include <BS_thread_pool.hpp>
 #include <fmt/format.h>
 #include <glaze/glaze.hpp>
 #include <spdlog/spdlog.h>
@@ -16,6 +17,8 @@
 
 namespace wsrpc
 {
+
+static BS::thread_pool pool;
 
 template <std::derived_from<App> App_t = App>
 requires std::default_initializable<App_t>
@@ -103,11 +106,13 @@ struct Server
            SPDLOG_DEBUG("Message received: {}, {}", std::to_string(opCode), message);
            switch (opCode) {
              case uWS::OpCode::TEXT: {
-               assert(not glz::validate_json(message));
-               auto pkg = handle(*ws->getUserData(), message);
-               SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
-               assert(not glz::validate_json(pkg.resp));
-               uWS::Loop::get()->defer([ws, pkg = std::move(pkg)]() { Server::send(ws, pkg); });
+               pool.detach_task([loop = uWS::Loop::get(), ws, message = std::string(message)]() {
+                 assert(not glz::validate_json(message));
+                 auto pkg = handle(*ws->getUserData(), message);
+                 SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
+                 assert(not glz::validate_json(pkg.resp));
+                 loop->defer([ws, pkg = std::move(pkg)]() { Server::send(ws, pkg); });
+               });
                break;
              }
              case uWS::OpCode::BINARY: {
