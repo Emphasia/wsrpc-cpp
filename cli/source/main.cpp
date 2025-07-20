@@ -1,49 +1,14 @@
-#include <exception>
 #include <iostream>
 #include <string>
 
 #include <cxxopts.hpp>
 #include <fmt/format.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 #include <wsrpc/server.hpp>
 #include <wsrpc/version.h>
 
 static constexpr auto log_level = spdlog::level::level_enum(SPDLOG_ACTIVE_LEVEL);
-
-void terminate_handler() noexcept
-{
-  auto ex_ptr = std::current_exception();
-  if (ex_ptr) {
-    try {
-      std::rethrow_exception(ex_ptr);
-    }
-    catch (const std::exception& e) {
-      SPDLOG_CRITICAL("Uncaught Exception: {}", e.what());
-    }
-    catch (...) {
-      SPDLOG_CRITICAL("Uncaught Exception: Unknown type");
-    }
-  }
-  else {
-    SPDLOG_CRITICAL("Terminate called without active exception");
-  }
-  std::abort();
-}
-
-auto init_logger() -> void
-{
-  auto logger = spdlog::stdout_color_mt("main");
-#ifdef NDEBUG
-  logger->set_level(spdlog::level::info);
-  logger->set_pattern("%Y-%m-%d %T.%e | %^%L%$ | %s:%# | %v");
-#else
-  logger->set_level(spdlog::level::debug);
-  logger->set_pattern("%Y-%m-%d %T.%e | %^%-4!l%$ | %s:%# | %t | %v");
-#endif
-  spdlog::set_default_logger(logger);
-}
 
 auto cli(const int argc, const char* const argv[]) -> wsrpc::Options
 {
@@ -94,9 +59,8 @@ auto cli(const int argc, const char* const argv[]) -> wsrpc::Options
 
 int main(const int argc, const char* const argv[])
 {
-  init_logger();
-
-  std::set_terminate(terminate_handler);
+  wsrpc::init_logger();
+  wsrpc::init_exception_handler();
 
   SPDLOG_DEBUG("debugging...");
 

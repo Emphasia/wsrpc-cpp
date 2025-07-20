@@ -3,6 +3,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstddef>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <mutex>
@@ -13,10 +14,47 @@
 #include <vector>
 
 #include <fmt/chrono.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 namespace wsrpc
 {
+
+inline void init_logger()
+{
+  if (spdlog::get("wsrpc")) return;
+  auto logger = spdlog::stderr_color_mt("wsrpc");
+#ifdef NDEBUG
+  logger->set_level(spdlog::level::info);
+  logger->set_pattern("%Y-%m-%d %T.%e | %^%L%$ | %s:%# | %v");
+#else
+  logger->set_level(spdlog::level::debug);
+  logger->set_pattern("%Y-%m-%d %T.%e | %^%-4!l%$ | %s:%# | %t | %v");
+#endif
+  spdlog::set_default_logger(logger);
+}
+
+inline void init_exception_handler()
+{
+  std::set_terminate([] {
+    auto ex_ptr = std::current_exception();
+    if (ex_ptr) {
+      try {
+        std::rethrow_exception(ex_ptr);
+      }
+      catch (const std::exception& e) {
+        SPDLOG_CRITICAL("Uncaught Exception: {}", e.what());
+      }
+      catch (...) {
+        SPDLOG_CRITICAL("Uncaught Exception: Unknown type");
+      }
+    }
+    else {
+      SPDLOG_CRITICAL("Terminate called without active exception");
+    }
+    std::abort();
+  });
+}
 
 inline std::string_view sv(const std::vector<std::byte>& data)
 {
