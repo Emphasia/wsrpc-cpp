@@ -1,13 +1,18 @@
 #pragma once
 
 #include <chrono>
+#include <condition_variable>
 #include <cstddef>
 #include <fstream>
+#include <functional>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <vector>
 
+#include <fmt/chrono.h>
 #include <spdlog/spdlog.h>
 
 namespace wsrpc
@@ -96,6 +101,51 @@ inline std::string read_text(const std::string& filePath)
   }
   return content;
 }
+
+class ScheduledTask
+{
+public:
+  using Task = std::move_only_function<void()>;
+
+  void schedule(std::string_view name, Task&& task, std::chrono::milliseconds delay)
+  {
+    assert(not name.empty() and task and delay > std::chrono::milliseconds(0));
+    name_ = std::string(name);
+    task_ = std::move(task);
+    scheduled_time_ = std::chrono::steady_clock::now() + delay;
+    SPDLOG_DEBUG("{} scheduled with {}", name_, delay);
+    worker_thread_ = std::jthread([this] { run(); });
+  }
+
+  void cancel()
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    if (!task_) return;
+    task_ = nullptr;
+    lock.unlock();
+    SPDLOG_DEBUG("{} canceled", name_);
+    cv_.notify_all();
+  }
+
+private:
+  void run()
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    cv_.wait_until(lock, scheduled_time_, [this] { return not bool(task_); });
+    if (task_) {
+      SPDLOG_DEBUG("{} executing...", name_);
+      task_();
+    }
+  }
+
+private:
+  std::string name_;
+  Task task_;
+  std::chrono::steady_clock::time_point scheduled_time_;
+  std::mutex mutex_;
+  std::condition_variable cv_;
+  std::jthread worker_thread_;
+};
 
 class Timer
 {

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
+#include <chrono>
 #include <concepts>
 #include <ranges>
 #include <string>
@@ -25,6 +27,8 @@ template <std::derived_from<App> App_t = App>
 requires std::default_initializable<App_t>
 struct Server
 {
+  static inline std::atomic<unsigned int> count{0};
+
   /* ws->getUserData returns one of these */
   struct SocketData
   {
@@ -86,6 +90,7 @@ struct Server
 
   static void serve(const std::string host, const int port)
   {
+    ScheduledTask task;
     uWS::App u;
     u.ws<SocketData>(
       "/*",
@@ -105,6 +110,8 @@ struct Server
            /* This connection opened */
            SPDLOG_INFO("Socket opened");
            SPDLOG_INFO("Remote at {}:{}", ws->getRemoteAddressAsText(), us_socket_remote_port(0, (us_socket_t*)ws));
+           count++;
+           task.cancel();
          },
        .message =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
@@ -158,9 +165,17 @@ struct Server
            /* This connection closing */
            SPDLOG_INFO("Socket closed: {}, {}", code, message);
            SPDLOG_INFO("Remote at {}:{}", ws->getRemoteAddressAsText(), us_socket_remote_port(0, (us_socket_t*)ws));
+           count--;
            uWS::Loop::get()->defer([&]() {
-             SPDLOG_INFO("Exiting...");
-             u.close();  // TODO
+             if (count > 0) return;
+             SPDLOG_INFO("Exiting in 5 seconds...");
+             task.schedule(
+               "exit",
+               [&]() {
+                 SPDLOG_INFO("Exiting...");
+                 u.close();
+               },
+               std::chrono::seconds(5));
            });
          }});
     u.listen(host, port, [&](auto* listen_socket) {

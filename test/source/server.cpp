@@ -172,11 +172,7 @@ if __name__ == '__main__':
     };
 
     wsrpc::Server<AppT> server;
-    auto s = std::jthread([&]() {
-      CHECK_NOTHROW(server.serve(host, port));
-      // TODO
-      CHECK_NOTHROW(server.serve(host, port));
-    });
+    auto s = std::jthread([&]() { CHECK_NOTHROW(server.serve(host, port)); });
 
     auto ret = std::system(
       fmt::to_string(
