@@ -3,4 +3,4 @@
 namespace wsrpc
 {
 
-} // namespace wsrpc
+}  // namespace wsrpc

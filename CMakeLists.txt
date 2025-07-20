@@ -76,20 +76,6 @@ if(wsrpc_BUILD_FORMAT)
   CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
 endif()
 
-# ---- Create cli ----
-
-if(wsrpc_BUILD_CLI)
-  message(STATUS "enabling wsrpc_BUILD_CLI")
-  add_subdirectory(cli)
-endif()
-
-# ---- Create test ----
-
-if(wsrpc_BUILD_TEST)
-  message(STATUS "enabling wsrpc_BUILD_TEST")
-  add_subdirectory(test)
-endif()
-
 # ---- Create package ----
 
 if(wsrpc_BUILD_INSTALL)
@@ -104,8 +90,19 @@ if(wsrpc_BUILD_INSTALL)
     INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
     VERSION_HEADER ${PROJECT_NAME}/version.h
     COMPATIBILITY SameMajorVersion
-    DEPENDENCIES
-      "fmt 11.1.4"
-      "spdlog 1.15.3"
   )
+endif()
+
+# ---- Create cli ----
+
+if(wsrpc_BUILD_CLI)
+  message(STATUS "enabling wsrpc_BUILD_CLI")
+  add_subdirectory(cli)
+endif()
+
+# ---- Create test ----
+
+if(wsrpc_BUILD_TEST)
+  message(STATUS "enabling wsrpc_BUILD_TEST")
+  add_subdirectory(test)
 endif()

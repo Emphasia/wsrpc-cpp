@@ -1,12 +1,14 @@
+#include <string>
+
+#include <cxxopts.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+
 #include <wsrpc/version.h>
 #include <wsrpc/wsrpc.h>
 
-#include <cxxopts.hpp>
-#include <string>
-
-auto init_logger() -> void {
+auto init_logger() -> void
+{
   auto logger = spdlog::stdout_color_mt("main");
 #ifdef NDEBUG
   logger->set_level(spdlog::level::info);
@@ -46,7 +48,8 @@ auto init_logger() -> void {
 //   return 0;
 // }
 
-int main() {
+int main()
+{
   init_logger();
 
   SPDLOG_DEBUG("program debugging");
