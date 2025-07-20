@@ -150,7 +150,7 @@ struct Server
        .message =
          [&]([[maybe_unused]] auto* ws, std::string_view message, uWS::OpCode opCode) {
            /* A message received */
-           SPDLOG_DEBUG("Message received: {}, {}", std::to_string(opCode), message);
+           SPDLOG_TRACE("Message received: {}, {}", std::to_string(opCode), message);
            auto& sd = *ws->getUserData();
            switch (opCode) {
              case uWS::OpCode::TEXT: {
@@ -159,7 +159,7 @@ struct Server
                  auto& sd = *ws->getUserData();
                  assert(not glz::validate_json(message));
                  auto pkg = handle(*sd.app, message);
-                 SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
+                 SPDLOG_TRACE("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
                  assert(not glz::validate_json(pkg.resp));
                  u.getLoop()->defer([ws, pkg = std::move(pkg)]() { reply(ws, pkg); });
                });
@@ -187,12 +187,12 @@ struct Server
        .ping =
          [&]([[maybe_unused]] auto* ws, std::string_view message) {
            /* A ping message received */
-           SPDLOG_DEBUG("Message ping received: {}", message);
+           SPDLOG_TRACE("Message ping received: {}", message);
          },
        .pong =
          [&]([[maybe_unused]] auto* ws, std::string_view message) {
            /* A pong message received */
-           SPDLOG_DEBUG("Message pong received: {}", message);
+           SPDLOG_TRACE("Message pong received: {}", message);
          },
        .close =
          [&]([[maybe_unused]] auto* ws, int code, std::string_view message) {
