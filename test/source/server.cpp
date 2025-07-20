@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <iostream>
 
 #include <doctest/doctest.h>
 #include <fmt/format.h>
@@ -7,6 +8,7 @@
 #include <wsrpc/app.hpp>
 #include <wsrpc/message.hpp>
 #include <wsrpc/server.hpp>
+#include <wsrpc/utility.hpp>
 
 std::optional<std::string> execute(const std::string& command)
 {

@@ -16,9 +16,9 @@
 #include <glaze/glaze.hpp>
 #include <spdlog/spdlog.h>
 
-#include "app.hpp"
-#include "message.hpp"
-#include "utility.hpp"
+#include "wsrpc/app.hpp"
+#include "wsrpc/message.hpp"
+#include "wsrpc/utility.hpp"
 
 namespace wsrpc
 {

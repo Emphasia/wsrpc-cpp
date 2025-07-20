@@ -9,7 +9,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include "message.hpp"
+#include "wsrpc/message.hpp"
 
 namespace wsrpc
 {

@@ -5,8 +5,8 @@
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
 
-#include <wsrpc/server.hpp>
 #include <wsrpc/version.h>
+#include <wsrpc/wsrpc.h>
 
 static constexpr auto log_level = spdlog::level::level_enum(SPDLOG_ACTIVE_LEVEL);
 
