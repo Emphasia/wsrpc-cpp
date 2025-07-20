@@ -107,32 +107,45 @@ class ScheduledTask
 public:
   using Task = std::move_only_function<void()>;
 
-  void schedule(std::string_view name, Task&& task, std::chrono::milliseconds delay)
+  ScheduledTask(std::string_view name, Task&& task)
   {
-    assert(not name.empty() and task and delay > std::chrono::milliseconds(0));
+    assert(not name.empty() and task);
     name_ = std::string(name);
     task_ = std::move(task);
-    scheduled_time_ = std::chrono::steady_clock::now() + delay;
+    canceled_.store(true);
+  }
+
+  ~ScheduledTask()
+  {
+    cancel();
+  }
+
+  void schedule(std::chrono::milliseconds delay)
+  {
+    assert(delay > std::chrono::milliseconds(0));
+    cancel();
     SPDLOG_DEBUG("{} scheduled with {}", name_, delay);
+    std::lock_guard<std::mutex> lock(mutex_);
+    scheduled_time_ = std::chrono::steady_clock::now() + delay;
+    canceled_.store(false);
+    assert(!worker_thread_.joinable());
     worker_thread_ = std::jthread([this] { run(); });
   }
 
   void cancel()
   {
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (!task_) return;
-    task_ = nullptr;
-    lock.unlock();
-    SPDLOG_DEBUG("{} canceled", name_);
+    if (canceled_.exchange(true)) return;
     cv_.notify_all();
+    worker_thread_ = {};
+    SPDLOG_DEBUG("{} canceled", name_);
   }
 
 private:
   void run()
   {
     std::unique_lock<std::mutex> lock(mutex_);
-    cv_.wait_until(lock, scheduled_time_, [this] { return not bool(task_); });
-    if (task_) {
+    cv_.wait_until(lock, scheduled_time_, [this] { return canceled_.load(); });
+    if (!canceled_) {
       SPDLOG_DEBUG("{} executing...", name_);
       task_();
     }
@@ -141,8 +154,9 @@ private:
 private:
   std::string name_;
   Task task_;
-  std::chrono::steady_clock::time_point scheduled_time_;
   std::mutex mutex_;
+  std::atomic<bool> canceled_;
+  std::chrono::steady_clock::time_point scheduled_time_;
   std::condition_variable cv_;
   std::jthread worker_thread_;
 };

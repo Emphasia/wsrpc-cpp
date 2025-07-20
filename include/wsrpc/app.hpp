@@ -27,10 +27,14 @@ struct App
 
   App()
   {
+    SPDLOG_INFO("App created");
     regist("echo", [](const rawjson_t& params) -> return_t { return package_t{params, {}}; });
   }
 
-  virtual ~App() = default;
+  virtual ~App()
+  {
+    SPDLOG_INFO("App destroyed");
+  }
 
   App(const App&) = delete;
   App(App&&) = delete;
@@ -53,7 +57,7 @@ struct App
     registry.erase(method);
   }
 
-  return_t handle(const std::string& method, const rawjson_t& params) noexcept
+  return_t handle(const std::string& method, const rawjson_t& params)
   {
     std::shared_ptr<handler_t> handler;
     {

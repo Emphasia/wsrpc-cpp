@@ -82,7 +82,7 @@ auto cli(const int argc, const char* const argv[]) -> wsrpc::Options
     return {
       .host = result["host"].as<std::string>(),
       .port = result["port"].as<int>(),
-      .timeout_s = result["timeout"].as<size_t>()};
+      .timeout_secs = result["timeout"].as<size_t>()};
   }
   catch (const cxxopts::exceptions::exception& e) {
     std::cerr << "Error parsing options: " << e.what() << std::endl;
