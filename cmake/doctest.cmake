@@ -8,7 +8,7 @@ CPMAddPackage(
   URL https://github.com/doctest/doctest/archive/refs/tags/v2.4.12.zip
   SYSTEM YES
   OPTIONS
-    "DOCTEST_WITH_MAIN_IN_STATIC_LIB ON"
+    "DOCTEST_WITH_MAIN_IN_STATIC_LIB OFF"
     "DOCTEST_WITH_TESTS OFF"
     "DOCTEST_NO_INSTALL OFF"
 )
