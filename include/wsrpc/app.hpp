@@ -3,6 +3,8 @@
 #include <expected>
 #include <flat_map>
 #include <functional>
+#include <memory>
+#include <shared_mutex>
 #include <string>
 
 #include <spdlog/spdlog.h>
@@ -17,7 +19,11 @@ struct App
   using return_t = std::expected<package_t, std::string>;
   using handler_t = std::move_only_function<return_t(rawjson_t)>;
 
-  std::flat_map<std::string, handler_t> handlers = {};
+  struct
+  {
+    std::shared_mutex mutex = {};
+    std::flat_map<std::string, std::shared_ptr<handler_t>> registry = {};
+  } handlers = {};
 
   App()
   {
@@ -27,31 +33,40 @@ struct App
   virtual ~App() = default;
 
   App(const App&) = delete;
-  App(App&&) = default;
+  App(App&&) = delete;
   App& operator=(const App&) = delete;
-  App& operator=(App&&) = default;
+  App& operator=(App&&) = delete;
 
   void regist(const std::string& method, handler_t&& handler)
   {
     SPDLOG_INFO("Registering method: {}", method);
-    handlers.insert_or_assign(method, std::move(handler));
+    auto& [mutex, registry] = handlers;
+    std::lock_guard lock(mutex);
+    registry.insert_or_assign(method, std::make_shared<handler_t>(std::move(handler)));
   }
 
   void unregist(const std::string& method)
   {
     SPDLOG_INFO("Unregistering method: {}", method);
-    handlers.erase(method);
+    auto& [mutex, registry] = handlers;
+    std::lock_guard lock(mutex);
+    registry.erase(method);
   }
 
   return_t handle(const std::string& method, const rawjson_t& params) noexcept
   {
-    auto func = handlers.find(method);
-    if (func == handlers.end()) {
-      return std::unexpected(error::format(error::METHOD_UNAVAIABLE, '"' + method + '"'));
+    std::shared_ptr<handler_t> handler;
+    {
+      auto& [mutex, registry] = handlers;
+      std::lock_guard lock(mutex);
+      auto func = registry.find(method);
+      if (func == registry.end()) {
+        return std::unexpected(error::format(error::METHOD_UNAVAIABLE, '"' + method + '"'));
+      }
+      handler = func->second;
     }
-    auto& handler = func->second;
     try {
-      return std::invoke(handler, params);
+      return std::invoke(*handler, params);
     }
     catch (const std::exception& e) {
       SPDLOG_ERROR("Uncaught Exception: {}", e.what());
