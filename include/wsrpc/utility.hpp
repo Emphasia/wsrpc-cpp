@@ -7,6 +7,7 @@
 #include <fstream>
 #include <functional>
 #include <mutex>
+#include <source_location>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -14,6 +15,7 @@
 #include <vector>
 
 #include <fmt/chrono.h>
+#include <spdlog/common.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
@@ -202,33 +204,33 @@ private:
 class Timer
 {
 public:
-  explicit Timer(std::string_view context) : context_(context), start_(std::chrono::high_resolution_clock::now())
+  explicit inline Timer(
+    std::string_view context,
+    spdlog::level::level_enum level = spdlog::level::debug,
+    std::source_location location = std::source_location::current())
+    : context_(context), level_(level), location_(location), start_(std::chrono::high_resolution_clock::now())
   {
   }
 
-  ~Timer()
+  inline ~Timer()
   {
-    if (!cancelled_) {
-      const auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> ms = end - start_;
-      SPDLOG_DEBUG("{} took {:.3f} ms", context_, ms.count());
-    }
+    const auto end = std::chrono::high_resolution_clock::now();
+    const std::chrono::duration<double, std::milli> ms = end - start_;
+    const spdlog::source_loc loc{location_.file_name(), static_cast<int>(location_.line()), location_.function_name()};
+    spdlog::log(loc, level_, "{} took {:.3f} ms", context_, ms.count());
   }
 
   Timer(const Timer&) = delete;
   Timer& operator=(const Timer&) = delete;
 
-  void cancel() noexcept
-  {
-    cancelled_ = true;
-  }
-
 private:
-  std::string_view context_;
+  const std::string_view context_;
+  const spdlog::level::level_enum level_;
+  const std::source_location location_;
   const std::chrono::time_point<std::chrono::high_resolution_clock> start_;
-  bool cancelled_ = false;
 };
 
 #define TIMEIT wsrpc::Timer _timeit_timer(__FUNCTION__)
+#define TIMEIT_(_level) wsrpc::Timer _timeit_timer(__FUNCTION__, spdlog::level::level_enum(_level))
 
 }  // namespace wsrpc

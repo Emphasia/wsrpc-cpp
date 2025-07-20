@@ -73,7 +73,7 @@ struct Server
 
   static package_t handle(App_t& app, std::string_view raw)
   {
-    TIMEIT;
+    TIMEIT_(0);
     request_t request{};
     response_t response{.result = "null"};
     auto pack = [](const response_t& resp, attachs_t&& atts = {}) -> package_t {
