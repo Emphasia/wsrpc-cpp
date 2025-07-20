@@ -165,7 +165,7 @@ if __name__ == '__main__':
         });
         regist("test1", [&](const wsrpc::rawjson_t&) -> wsrpc::package_t {
           auto j = data.json_tree;
-          j["data"] = wsrpc::encode_base64(data.jpg_landing);
+          j["data"] = glz::write_base64(wsrpc::sv(data.jpg_landing));
           return {j.dump().value(), {}};
         });
       }
