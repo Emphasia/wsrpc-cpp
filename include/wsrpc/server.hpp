@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <concepts>
 #include <string>
 #include <string_view>
 
@@ -16,12 +17,13 @@
 namespace wsrpc
 {
 
+template <std::derived_from<App> App_t = App>
 struct Server
 {
   /* ws->getUserData returns one of these */
   struct SocketData
   {
-    App app{};
+    App_t app{};
   };
 
   static void init([[maybe_unused]] SocketData& sd)

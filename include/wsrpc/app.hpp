@@ -17,12 +17,14 @@ struct App
   using return_t = std::expected<package_t, std::string>;
   using handler_t = std::move_only_function<return_t(rawjson_t)>;
 
-  std::flat_map<std::string, handler_t> handlers;
+  std::flat_map<std::string, handler_t> handlers = {};
 
   App()
   {
     regist("echo", [](const rawjson_t& params) -> return_t { return package_t{params, {}}; });
   }
+
+  virtual ~App() = default;
 
   void regist(const std::string& method, handler_t&& handler)
   {
