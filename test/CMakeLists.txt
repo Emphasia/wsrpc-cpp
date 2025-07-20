@@ -29,9 +29,9 @@ target_link_libraries(${PROJECT_NAME} wsrpc::wsrpc doctest::doctest_with_main)
 
 # enable compiler warnings
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wpedantic -Wextra -Werror)
+  target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wpedantic -Wextra -Werror -Wno-error=unused-parameter)
 elseif(MSVC)
-  target_compile_options(${PROJECT_NAME} PUBLIC /W4 /WX)
+  target_compile_options(${PROJECT_NAME} PUBLIC /W4 /WX /wd4100)
   target_compile_definitions(${PROJECT_NAME} PUBLIC DOCTEST_CONFIG_USE_STD_HEADERS)
 endif()
 
