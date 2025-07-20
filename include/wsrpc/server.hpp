@@ -132,7 +132,7 @@ struct Server
        .drain =
          [&]([[maybe_unused]] auto* ws) {
            /* All sending messages drained */
-           SPDLOG_WARN("Message drained");
+           SPDLOG_DEBUG("Message drained");
          },
        .ping =
          [&]([[maybe_unused]] auto* ws, std::string_view message) {
