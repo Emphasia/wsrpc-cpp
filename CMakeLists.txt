@@ -82,7 +82,31 @@ endif()
 
 if(wsrpc_BUILD_FORMAT)
   message(STATUS "enabling wsrpc_BUILD_FORMAT")
-  CPMAddPackage("gh:TheLartians/Format.cmake@1.8.3")
+  CPMAddPackage(
+    URI "gh:TheLartians/Format.cmake@1.8.3"
+    OPTIONS "FORMAT_SKIP_CMAKE ON" "FORMAT_SKIP_CLANG OFF")
+  add_dependencies(${PROJECT_NAME} check-format)
+endif()
+
+# ---- Create test ----
+
+if(wsrpc_BUILD_TEST)
+  message(STATUS "enabling wsrpc_BUILD_TEST")
+  add_subdirectory(test)
+endif()
+
+# ---- Create doc ----
+
+if(wsrpc_BUILD_DOC)
+  # message(STATUS "enabling wsrpc_BUILD_DOC")
+  # add_subdirectory(doc)
+endif()
+
+# ---- Create cli ----
+
+if(wsrpc_BUILD_CLI)
+  message(STATUS "enabling wsrpc_BUILD_CLI")
+  add_subdirectory(cli)
 endif()
 
 # ---- Create package ----
@@ -100,18 +124,4 @@ if(wsrpc_BUILD_INSTALL)
     VERSION_HEADER ${PROJECT_NAME}/version.h
     COMPATIBILITY SameMajorVersion
   )
-endif()
-
-# ---- Create cli ----
-
-if(wsrpc_BUILD_CLI)
-  message(STATUS "enabling wsrpc_BUILD_CLI")
-  add_subdirectory(cli)
-endif()
-
-# ---- Create test ----
-
-if(wsrpc_BUILD_TEST)
-  message(STATUS "enabling wsrpc_BUILD_TEST")
-  add_subdirectory(test)
 endif()
