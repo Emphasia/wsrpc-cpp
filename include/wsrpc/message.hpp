@@ -15,6 +15,10 @@ struct request_t
   std::string id{};
   std::string method{};
   glz::raw_json params{};
+  operator bool() const
+  {
+    return !id.empty() && !method.empty() && !params.str.empty();
+  }
 };
 
 struct response_t
@@ -22,6 +26,10 @@ struct response_t
   std::string id{};
   glz::raw_json result{};
   std::optional<std::string> error{};
+  operator bool() const
+  {
+    return !id.empty() && (!result.str.empty() || error.has_value());
+  }
 };
 
 namespace error

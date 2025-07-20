@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -36,8 +37,9 @@ struct Server
   static package_t handle(SocketData& sd, std::string_view raw)
   {
     request_t request{};
-    response_t response{};
+    response_t response{.result = "null"};
     auto pack = [](const response_t& resp, attachs_t&& atts = {}) -> package_t {
+      assert(resp);
       auto pr = glz::write_json(resp);
       if (!pr) [[unlikely]] {
         auto error_msg = error::format(error::INVALID_RESPONSE, glz::format_error(pr.error()));
@@ -49,8 +51,9 @@ struct Server
       return {std::move(pr).value(), std::move(atts)};
     };
     auto pe = glz::read_json(request, raw);
-    if (pe) [[unlikely]] {
-      auto error_msg = error::format(error::INVALID_REQUEST, glz::format_error(pe, raw));
+    if (pe || !request) [[unlikely]] {
+      if (!request.id.empty()) response.id = request.id;
+      auto error_msg = error::format(error::INVALID_REQUEST, pe ? glz::format_error(pe, raw) : "field invalid");
       SPDLOG_ERROR(error_msg);
       response.error = error_msg;
       return pack(response);
@@ -95,8 +98,10 @@ struct Server
              SPDLOG_DEBUG("Message {} received", std::to_string(opCode));
              switch (opCode) {
                case uWS::OpCode::TEXT: {
+                 assert(not glz::validate_json(message));
                  auto [resp, atts] = handle(*ws->getUserData(), message);
                  SPDLOG_DEBUG("Response +{} generated: {}", atts.size(), resp);
+                 assert(not glz::validate_json(resp));
                  for (auto& att : atts) ws->send(sv(att), uWS::OpCode::BINARY);
                  ws->send(resp, uWS::OpCode::TEXT);
                  break;

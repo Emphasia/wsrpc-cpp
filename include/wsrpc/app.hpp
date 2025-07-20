@@ -43,7 +43,7 @@ struct App
   {
     auto func = handlers.find(method);
     if (func == handlers.end()) {
-      return std::unexpected(error::format(error::METHOD_UNAVAIABLE, method));
+      return std::unexpected(error::format(error::METHOD_UNAVAIABLE, '"' + method + '"'));
     }
     auto& handler = func->second;
     try {
@@ -55,7 +55,7 @@ struct App
     catch (...) {
       SPDLOG_CRITICAL("Uncaught Exception: Unknown type");
     }
-    return std::unexpected(error::format(error::INTERNAL_ERROR, method));
+    return std::unexpected(error::format(error::INTERNAL_ERROR, '"' + method + '"'));
   }
 };
 

@@ -72,7 +72,7 @@ TEST_SUITE("app")
     // Test handling a non-existent method
     auto result = app.handle("nonexistent_method", "{}");
     REQUIRE_FALSE(result.has_value());
-    CHECK(result.error() == "Method Unavaiable : nonexistent_method");
+    CHECK(result.error() == "Method Unavaiable : \"nonexistent_method\"");
 
     // Test handling an existing method
     app.regist("test_method", [](const wsrpc::App::rawjson_t&) -> wsrpc::App::return_t {
@@ -92,6 +92,6 @@ TEST_SUITE("app")
 
     auto result3 = app.handle("throwing_method", "{}");
     REQUIRE_FALSE(result3.has_value());
-    CHECK(result3.error() == "Internal Error : throwing_method");
+    CHECK(result3.error() == "Internal Error : \"throwing_method\"");
   }
 }

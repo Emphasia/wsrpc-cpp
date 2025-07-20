@@ -34,6 +34,8 @@ TEST_SUITE("server")
     std::string_view valid_request = R"({"id": "1", "method": "test_method", "params": {}})";
     auto result = wsrpc::Server::handle(socket_data, valid_request);
 
+    CHECK_FALSE(glz::validate_json(result.first));
+
     // Parse the response to check it
     wsrpc::response_t response{};
     auto pe = glz::read_json(response, result.first);
@@ -51,14 +53,16 @@ TEST_SUITE("server")
     std::string_view invalid_request = R"({"id": "1", "method": "test_method")";  // Missing closing brace
     auto result = wsrpc::Server::handle(socket_data, invalid_request);
 
+    CHECK_FALSE(glz::validate_json(result.first));
+
     // Parse the response to check it
     wsrpc::response_t response{};
     auto pe = glz::read_json(response, result.first);
     REQUIRE_FALSE(pe);
-    CHECK(response.id.empty());
-    CHECK(response.result.str.empty());
+    // CHECK(response.id.empty());
+    // CHECK(response.result.str.empty());
     REQUIRE(response.error.has_value());
-    CHECK(response.error.value().find("Invalid Request") != std::string::npos);
+    CHECK(response.error.value().starts_with("Invalid Request : "));
   }
 
   TEST_CASE("Server handle function with unknown method")
@@ -69,13 +73,15 @@ TEST_SUITE("server")
     std::string_view unknown_request = R"({"id": "1", "method": "unknown_method", "params": {}})";
     auto result = wsrpc::Server::handle(socket_data, unknown_request);
 
+    CHECK_FALSE(glz::validate_json(result.first));
+
     // Parse the response to check it
     wsrpc::response_t response{};
     auto pe = glz::read_json(response, result.first);
     REQUIRE_FALSE(pe);
     CHECK(response.id == "1");
-    CHECK(response.result.str.empty());
+    // CHECK(response.result.str.empty());
     REQUIRE(response.error.has_value());
-    CHECK(response.error.value().find("Method Unavaiable") != std::string::npos);
+    CHECK(response.error.value() == "Method Unavaiable : \"unknown_method\"");
   }
 }
