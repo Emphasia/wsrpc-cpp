@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <concepts>
+#include <ranges>
 #include <string>
 #include <string_view>
 
@@ -73,9 +74,10 @@ struct Server
     return pack(response, std::move(result.value().second));
   }
 
-  static void send(auto* ws, const package_t& pkg)
+  static void reply(auto* ws, const package_t& pkg)
   {
-    for (auto& att : pkg.atts) ws->send(sv(att), uWS::OpCode::BINARY);
+    for (auto& att : pkg.atts | std::views::reverse)  //
+      ws->send(sv(att), uWS::OpCode::BINARY);
     ws->send(pkg.resp, uWS::OpCode::TEXT);
   }
 
@@ -111,7 +113,7 @@ struct Server
                  auto pkg = handle(*ws->getUserData(), message);
                  SPDLOG_DEBUG("Response +{} generated: {}", pkg.atts.size(), pkg.resp);
                  assert(not glz::validate_json(pkg.resp));
-                 loop->defer([ws, pkg = std::move(pkg)]() { Server::send(ws, pkg); });
+                 loop->defer([ws, pkg = std::move(pkg)]() { Server::reply(ws, pkg); });
                });
                break;
              }
