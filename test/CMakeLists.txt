@@ -4,7 +4,8 @@ project(wsrpc_tests LANGUAGES CXX)
 
 # ---- Options ----
 
-option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
+option(ENABLE_COVERAGE "Enable test coverage" OFF)
+option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
 # --- Import tools ----
 
@@ -35,6 +36,11 @@ elseif(MSVC)
   target_compile_definitions(${PROJECT_NAME} PUBLIC DOCTEST_CONFIG_USE_STD_HEADERS)
 endif()
 
+if(ENABLE_ASAN)
+  target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
+  target_link_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
+endif()
+
 # ---- Add tests ----
 
 enable_testing()
@@ -44,7 +50,18 @@ doctest_discover_tests(${PROJECT_NAME})
 
 # ---- code coverage ----
 
-if(ENABLE_TEST_COVERAGE)
-  target_compile_options(${PROJECT_NAME} PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
-  target_link_options(${PROJECT_NAME} PUBLIC -fprofile-arcs -ftest-coverage)
+if(ENABLE_COVERAGE)
+  find_program(GCOVR_PATH gcovr REQUIRED)
+  target_compile_options(${PROJECT_NAME} PUBLIC -O0 -g -fprofile-arcs -ftest-coverage --coverage)
+  target_link_options(${PROJECT_NAME} PUBLIC -fprofile-arcs -ftest-coverage --coverage)
+  add_custom_target(coverage
+    COMMAND ${CMAKE_CTEST_COMMAND}
+    COMMAND ${GCOVR_PATH}
+            --root ${CMAKE_SOURCE_DIR} --object-directory ${PROJECT_BINARY_DIR}
+            --print-summary --html-details --output ${CMAKE_BINARY_DIR}/coverage.html
+            --exclude-unreachable-branches --exclude-throw-branches
+            --exclude '.*/usr/.*'
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    COMMENT "Generating code coverage report"
+  )
 endif()
